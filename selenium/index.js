@@ -27,7 +27,7 @@ class Selenium {
         const password = 'C6h9AiX';
 
         this.browser = await puppeteer.launch({
-            args: [`--proxy-server=${proxyUrl}`],
+            args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
             headless: true,
         });
 
