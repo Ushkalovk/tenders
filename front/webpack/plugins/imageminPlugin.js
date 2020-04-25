@@ -1,0 +1,3 @@
+const
+  manifest          = require('../manifest')
+

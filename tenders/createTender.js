@@ -1,0 +1,40 @@
+const Tender = require('../models/tender');
+const selenium = require('../selenium/index');
+const sendMessageToClient = require("./sendMessageToClient");
+const find = require('../company/find');
+
+module.exports = (req, res) => {
+    const {creationsTime, link, creator, status, timeForNextStep, company} = req.body;
+
+    Tender.findOne({'link': link}, async (err, tender) => {
+        const {login, password, proxyIP} = await find(company);
+
+        if (!tender) {
+            const newTender = new Tender();
+
+            selenium({link, isParseName: true, login, password, proxyIP});
+
+            newTender.creationsTime = creationsTime;
+            newTender.name = '';
+            newTender.link = link;
+            newTender.creator = creator;
+            newTender.company = company;
+            newTender.status = status;
+            newTender.timeForNextStep = timeForNextStep;
+            newTender.numberOfParticipants = 0;
+            newTender.isBotOn = false;
+            newTender.isWork = false;
+            newTender.allowToDelete = true;
+            newTender.logs = [];
+
+            newTender.save(err => {
+                if (err) throw err;
+
+                sendMessageToClient(req.body);
+                res.json({status: true, message: 'Тендер создан'})
+            });
+        } else {
+            await res.json({status: false, message: 'Уже существует тендер с идентичной ссылкой'})
+        }
+    });
+};

@@ -1,0 +1,290 @@
+// ---------------------------------------------------------
+// @TOC
+// ---------------------------------------------------------
+
+// + @Page Container
+// + @Main Content
+// + @Full Container
+// + @Collapsed State
+
+// ---------------------------------------------------------
+// @Page Container
+// ---------------------------------------------------------
+
+.pointer {
+  cursor: pointer;
+}
+
+.center {
+  text-align: center;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-left: $offscreen-size;
+  transition: all 0.2s ease;
+
+  @include between($breakpoint-md, $breakpoint-xl) {
+    padding-left: $collapsed-size;
+  }
+
+  @include to($breakpoint-md) {
+    padding-left: 0;
+  }
+}
+
+.main-content.bgc-grey-100 {
+  flex: 1 0 auto;
+}
+
+#aboutTenders {
+  margin: 50px 0;
+  width: 100%;
+}
+
+#dataTable_info {
+  display: none;
+}
+
+table.dataTable thead th:last-child,
+table.dataTable thead th:nth-last-child(2),
+table.dataTable thead th:nth-last-child(3),
+table.dataTable thead th:nth-last-child(4) {
+  background-image: none !important;
+}
+
+#mainContent {
+  width: 100%;
+}
+
+.authority {
+  margin-top: 30px;
+}
+
+.userRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#modalError {
+  z-index: 10000;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 8px;
+}
+
+.transition-opacity {
+  transition: 1s linear opacity;
+  opacity: 0;
+}
+
+.buttonGetLogs {
+  height: 40px;
+}
+
+.userName {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#modalLogs .modal-dialog {
+  margin: auto;
+  background: #fff;
+  width: 80%;
+  height: 80%;
+  max-width: 1000px;
+  transform: translateY(-50%);
+  top: 50%;
+}
+
+.modal-content {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+#betsPage {
+  display: none;
+}
+
+.tendersInfo {
+  display: block;
+  width: 100%;
+  margin: 0;
+  background: #fff;
+  padding: 20px;
+}
+
+.tendersInfo .buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tendersInfo .btn-primary {
+  margin-bottom: 30px;
+}
+
+.tendersInfo .tendersList {
+  margin: 0 auto;
+}
+
+#popupMakeABet {
+  position: sticky;
+  display: none;
+  padding: 30px;
+  width: 100%;
+  background: white;
+  bottom: 0;
+}
+
+.wrapper {
+  margin: auto;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+}
+
+.yourSuggestion {
+  display: flex;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.yourSuggestion .text {
+  font-weight: bold;
+}
+
+.wrapper .systems form {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrapper .systems input {
+  width: calc(100% - 300px);
+}
+
+.wrapper .systems .buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 230px;
+}
+
+.wrapper .systems .buttons .btn-success {
+  margin-right: 10px;
+}
+
+.authButtons {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: space-between;
+}
+
+// ---------------------------------------------------------
+// @Main Content
+// ---------------------------------------------------------
+
+.main-content {
+  padding: 85px 20px 20px;
+
+  @include to($breakpoint-md) {
+    padding: 85px 5px 5px;
+  }
+}
+
+.remain-height {
+  height: calc(100vh - 126px);
+}
+
+#companyCreate {
+  margin: auto;
+  max-width: 100%;
+}
+
+#companyCreate form {
+  display: flex;
+  flex-direction: column;
+}
+
+#companyCreate form .form-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+#companyCreate form .form-group .form-control {
+  width: 20%;
+}
+
+#companyCreate form .form-group .form-control:not(:last-child){
+  margin-right: 20px;
+}
+
+.table .thead-light th,
+.table .thead-light td {
+  width: 20%
+}
+
+#linkInput .form-group {
+  display: flex;
+}
+
+#linkInput .form-group input {
+  margin-right: 30px;
+}
+
+  // ---------------------------------------------------------
+// @Full Container
+// ---------------------------------------------------------
+
+.full-container {
+  left: $offscreen-size;
+  min-height: calc(100vh - #{$header-height});
+  position: absolute;
+  right: 0;
+  top: $header-height;
+  transition: all 0.2s ease;
+
+  @include between($breakpoint-md, $breakpoint-xl) {
+    left: 0;
+    padding-left: $collapsed-size;
+  }
+
+  @include to($breakpoint-md) {
+    left: 0;
+  }
+}
+
+// ---------------------------------------------------------
+// @Collapsed State
+// ---------------------------------------------------------
+
+.is-collapsed {
+  .page-container {
+    padding-left: $collapsed-size;
+
+    @include to($breakpoint-md) {
+      padding-left: 0;
+    }
+
+    @include between($breakpoint-md, $breakpoint-xl) {
+      padding-left: $offscreen-size;
+    }
+  }
+
+  .full-container {
+    left: $collapsed-size;
+
+    @include to($breakpoint-md) {
+      left: 0;
+    }
+
+    @include between($breakpoint-md, $breakpoint-xl) {
+      left: $offscreen-size;
+      padding-left: 0;
+    }
+  }
+}

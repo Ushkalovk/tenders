@@ -1,0 +1,1194 @@
+<html lang="en" data-ng-app="auction" ng-controller="AuctionController" class="ng-scope">
+<head>
+  <style type="text/css">[uib-typeahead-popup].dropdown-menu {
+    display: block;
+  }</style>
+  <style type="text/css">.uib-time input {
+    width: 50px;
+  }</style>
+  <style
+    type="text/css">[uib-tooltip-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-popup].tooltip.right-bottom > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-html-popup].tooltip.right-bottom > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.top-left > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.top-right > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.bottom-left > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.bottom-right > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.left-top > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.left-bottom > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.right-top > .tooltip-arrow, [uib-tooltip-template-popup].tooltip.right-bottom > .tooltip-arrow, [uib-popover-popup].popover.top-left > .arrow, [uib-popover-popup].popover.top-right > .arrow, [uib-popover-popup].popover.bottom-left > .arrow, [uib-popover-popup].popover.bottom-right > .arrow, [uib-popover-popup].popover.left-top > .arrow, [uib-popover-popup].popover.left-bottom > .arrow, [uib-popover-popup].popover.right-top > .arrow, [uib-popover-popup].popover.right-bottom > .arrow, [uib-popover-html-popup].popover.top-left > .arrow, [uib-popover-html-popup].popover.top-right > .arrow, [uib-popover-html-popup].popover.bottom-left > .arrow, [uib-popover-html-popup].popover.bottom-right > .arrow, [uib-popover-html-popup].popover.left-top > .arrow, [uib-popover-html-popup].popover.left-bottom > .arrow, [uib-popover-html-popup].popover.right-top > .arrow, [uib-popover-html-popup].popover.right-bottom > .arrow, [uib-popover-template-popup].popover.top-left > .arrow, [uib-popover-template-popup].popover.top-right > .arrow, [uib-popover-template-popup].popover.bottom-left > .arrow, [uib-popover-template-popup].popover.bottom-right > .arrow, [uib-popover-template-popup].popover.left-top > .arrow, [uib-popover-template-popup].popover.left-bottom > .arrow, [uib-popover-template-popup].popover.right-top > .arrow, [uib-popover-template-popup].popover.right-bottom > .arrow {
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    margin: 0;
+  }
+
+  [uib-popover-popup].popover, [uib-popover-html-popup].popover, [uib-popover-template-popup].popover {
+    display: block !important;
+  }</style>
+  <style type="text/css">.uib-datepicker-popup.dropdown-menu {
+    display: block;
+    float: none;
+    margin: 0;
+  }
+
+  .uib-button-bar {
+    padding: 10px 9px 2px;
+  }</style>
+  <style type="text/css">.uib-position-measure {
+    display: block !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+  }
+
+  .uib-position-scrollbar-measure {
+    position: absolute !important;
+    top: -9999px !important;
+    width: 50px !important;
+    height: 50px !important;
+    overflow: scroll !important;
+  }
+
+  .uib-position-body-scrollbar-measure {
+    overflow: scroll !important;
+  }</style>
+  <style type="text/css">.uib-datepicker .uib-title {
+    width: 100%;
+  }
+
+  .uib-day button, .uib-month button, .uib-year button {
+    min-width: 100%;
+  }
+
+  .uib-left, .uib-right {
+    width: 100%
+  }</style>
+  <style type="text/css">.ng-animate.item:not(.left):not(.right) {
+    -webkit-transition: 0s ease-in-out left;
+    transition: 0s ease-in-out left
+  }</style>
+  <style type="text/css">@charset "UTF-8";
+  [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+    display: none;
+  }
+
+  ng\:form {
+    display: block;
+  }
+
+  .ng-animate-shim {
+    visibility: hidden;
+  }
+
+  .ng-anchor {
+    position: absolute;
+  }</style>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <style type="text/css">
+    [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+      display: none !important;
+    }
+  </style>
+
+  <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+  <link href="./static/css/all-2777cb0706.css" rel="stylesheet" crossorigin="anonymous">
+
+  <title
+    ng-bind-template="Аукцион закончился 13-го лютого 2020 о 13:45 - UA-2020-02-03-002879-a - Транзистори - ДЕРЖАВНЕ ПІДПРИЄМСТВО &quot;ЗАПОРІЗЬКИЙ ДЕРЖАВНИЙ АВІАЦ…"
+    ng-if="(!$root.info_timer.countdown)&amp;&amp;($root.info_timer.start_time != true)" class="ng-binding ng-scope">
+    Аукцион закончился 14-го лютого 2020 о 13:45 - UA-2020-02-03-002879-a - Транзистори - ДЕРЖАВНЕ ПІДПРИЄМСТВО
+    "ЗАПОРІЗЬКИЙ ДЕРЖАВНИЙ АВІАЦ…</title>
+  <!-- end ngIf: (!$root.info_timer.countdown)&&($root.info_timer.start_time != true) -->
+
+
+</head>
+
+
+<body>
+<noscript>
+  For full functionality of this site it is necessary to enable JavaScript.
+  Here are the http://www.enable-javascript.com
+  instructions how to enable JavaScript in your web browser.
+</noscript>
+
+<!-- ngIf: document_not_found -->
+<!-- ngIf: document_exists -->
+<div ng-if="document_exists" class="ng-scope">
+
+  <div class="container">
+    <div class="header-auction navbar navbar-fixed-top" role="navigation">
+      <div class="navbar-header header-auction-lining">
+        <div class="header-auction-item header-auction-nav">
+          <button id="menu_button" type="button" class="navbar-toggle collapsed" ng-init="navbarCollapsed=true"
+                  ng-click="open_menu()">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+
+        <div class="header-auction-item navbar-brand pull-left round-info timer-text">
+                    <span class="header-auction-item-visual">
+                        <!-- ngIf: !$parent.info_timer.start_time -->
+                      <!-- ngIf: !info_timer.countdown --><span ng-if="!info_timer.countdown" class="ng-scope">
+                            <!-- ngIf: $parent.info_timer.msg --><span ng-if="$parent.info_timer.msg"
+                                                                       class="ng-binding ng-scope">
+                                Аукцион закончился
+                            </span><!-- end ngIf: $parent.info_timer.msg -->
+                      <!-- ngIf: $parent.info_timer.start_time != true --><span
+                      ng-if="$parent.info_timer.start_time != true" class="ng-binding ng-scope">
+                              14-го лютого 2020 о 13:45</span><!-- end ngIf: $parent.info_timer.start_time != true -->
+                      <!-- ngIf: $parent.info_timer.msg_ending -->
+                        </span><!-- end ngIf: !info_timer.countdown -->
+                    </span>
+        </div>
+        <!-- ngIf: get_round_number(auction_doc.current_stage).type == 'waiting' -->
+        <!-- ngIf: get_round_number(auction_doc.current_stage).type == 'pause' -->
+        <!-- ngIf: get_round_number(auction_doc.current_stage).type == 'round' -->
+        <!-- ngIf: get_round_number(auction_doc.current_stage).type == 'finish' -->
+        <div id="round_information_block" class="header-auction-item navbar-brand pull-right round-information ng-scope"
+             ng-click="scroll_to_stage()" ng-if="get_round_number(auction_doc.current_stage).type == 'finish'">
+          <p class="round-number ng-scope" translate="">Окончен</p>
+        </div><!-- end ngIf: get_round_number(auction_doc.current_stage).type == 'finish' -->
+      </div>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" collapse="navbarCollapsed">
+
+      </div>
+      <!--/.nav-collapse -->
+    </div>
+    <!-- ngIf: $root.progres_timer.countdown_seconds -->
+  </div>
+
+  <div class="container">
+    <div growl="" class="ng-isolate-scope">
+      <div class="growl-container growl-fixed top-center" ng-class="wrapperClasses()">
+        <!-- ngRepeat: message in growlMessages.directives[referenceId].messages -->
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 hidden-xs">
+        <div class="page-header">
+          <h2 class="ng-binding">UA-2020-02-03-002879-a</h2>
+        </div>
+        <span class="lead ng-binding">ДЕРЖАВНЕ ПІДПРИЄМСТВО "ЗАПОРІЗЬКИЙ ДЕРЖАВНИЙ АВІАЦІЙНИЙ РЕМОНТНИЙ ЗАВОД "МІГРЕМОНТ": Транзистори
+          <!-- ngIf: auction_doc.lot --><span ng-if="auction_doc.lot" class="ng-binding ng-scope">: Лот 1. Транзистор 2Т831Г</span>
+          <!-- end ngIf: auction_doc.lot --></span>
+        <ul>
+          <!-- ngRepeat: item in auction_doc.items -->
+          <li ng-repeat="item in auction_doc.items" class="ng-binding ng-scope">
+            <span class="ng-binding">Транзистор 2Т831Г</span> - 50 <span class="ng-binding">шт</span>
+          </li><!-- end ngRepeat: item in auction_doc.items -->
+        </ul>
+      </div>
+    </div>
+    <!-- ngIf: auction_doc.current_stage >= 0 -->
+    <div id="initial-bids-header" class="auction-round past-round ng-scope" ng-if="auction_doc.current_stage >= 0">
+      <div class="row">
+        <div class="col-xs-12 stage-item stage-round">
+          <div class="stage-item-lining">
+            <div class="stage-info">
+              <div class="stage-info-lining">
+                <!-- ngIf: auction_doc.current_stage >= 0 --><span class="stage-info-item stage-label ng-scope"
+                                                                   ng-if="auction_doc.current_stage >= 0"><span
+                translate="" class="ng-scope">Первоначальные ставки</span></span>
+                <!-- end ngIf: auction_doc.current_stage >= 0 -->
+                <!-- ngIf: auction_doc.current_stage == -1 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ngRepeat: bid_info in auction_doc.initial_bids -->
+      <div id="initial-bid-1" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="bid_info in auction_doc.initial_bids" ng-class="{'current-stage': auction_doc.current_stage == -1,
+                            'past-stage':  auction_doc.current_stage > -1,
+                            'my-bid-stage': bid_info.bidder_id == bidder_id}">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ООО Промэлектроника</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="!angular.isUndefined(bid_info['amount']||bid_info['amount_features'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && auction_doc.current_stage == (auction_doc.stages.length - 1) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        3 200,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.initial_bids -->
+      <div id="initial-bid-2" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="bid_info in auction_doc.initial_bids" ng-class="{'current-stage': auction_doc.current_stage == -1,
+                            'past-stage':  auction_doc.current_stage > -1,
+                            'my-bid-stage': bid_info.bidder_id == bidder_id}">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ЕЛТОМ"</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="!angular.isUndefined(bid_info['amount']||bid_info['amount_features'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && auction_doc.current_stage == (auction_doc.stages.length - 1) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        3 500,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.initial_bids -->
+      <div id="initial-bid-3" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="bid_info in auction_doc.initial_bids" ng-class="{'current-stage': auction_doc.current_stage == -1,
+                            'past-stage':  auction_doc.current_stage > -1,
+                            'my-bid-stage': bid_info.bidder_id == bidder_id}">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ТЕРСІТ ЕЛЕКТРОНІКС"</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="!angular.isUndefined(bid_info['amount']||bid_info['amount_features'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && auction_doc.current_stage == (auction_doc.stages.length - 1) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        3 800,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount']||bid_info['amount_features']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.initial_bids -->
+    </div><!-- end ngIf: auction_doc.current_stage >= 0 -->
+    <!-- ngRepeat: stage in Rounds --><!-- ngIf: auction_doc.current_stage >= 0 -->
+    <div ng-if="auction_doc.current_stage >= 0" class="auction-round ng-scope past-round" id="round-header-1" ng-class="{'past-round':  (auction_doc.current_stage > (stage + auction_doc.initial_bids.length)),
+                        'current-round': ((auction_doc.current_stage >= stage)&amp;&amp;(auction_doc.current_stage <= (stage + auction_doc.initial_bids.length))),
+                        'future-round': auction_doc.current_stage < (stage + auction_doc.initial_bids.length)}"
+         ng-repeat="stage in Rounds">
+      <div class="row">
+        <div class="col-xs-12 stage-item stage-round">
+          <div class="stage-item-lining">
+            <div class="stage-info">
+              <div class="stage-info-lining">
+                <span class="stage-info-item stage-label ng-binding"><span translate="" class="ng-scope">Раунд</span> 1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-1" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div ng-if="$first" id="stage-0" class="ng-scope"></div><!-- end ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ТЕРСІТ ЕЛЕКТРОНІКС"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] --><span class="label-price ng-scope"
+                                                                                     ng-if="!auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <span class="label-price ng-binding">
+                                            3 800,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </span>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-2" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ЕЛТОМ"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] --><span class="label-price ng-scope"
+                                                                                     ng-if="!auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <span class="label-price ng-binding">
+                                            3 500,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </span>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-3" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ООО Промэлектроника</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] --><span class="label-price ng-scope"
+                                                                                     ng-if="!auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <span class="label-price ng-binding">
+                                            3 200,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </span>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+    </div><!-- end ngIf: auction_doc.current_stage >= 0 --><!-- end ngRepeat: stage in Rounds -->
+    <!-- ngIf: auction_doc.current_stage >= 0 -->
+    <div ng-if="auction_doc.current_stage >= 0" class="auction-round ng-scope past-round" id="round-header-2" ng-class="{'past-round':  (auction_doc.current_stage > (stage + auction_doc.initial_bids.length)),
+                        'current-round': ((auction_doc.current_stage >= stage)&amp;&amp;(auction_doc.current_stage <= (stage + auction_doc.initial_bids.length))),
+                        'future-round': auction_doc.current_stage < (stage + auction_doc.initial_bids.length)}"
+         ng-repeat="stage in Rounds">
+      <div class="row">
+        <div class="col-xs-12 stage-item stage-round">
+          <div class="stage-item-lining">
+            <div class="stage-info">
+              <div class="stage-info-lining">
+                <span class="stage-info-item stage-label ng-binding"><span translate="" class="ng-scope">Раунд</span> 2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-5" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div ng-if="$first" id="stage-4" class="ng-scope"></div><!-- end ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ТЕРСІТ ЕЛЕКТРОНІКС"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] --><span
+              class="label-price ng-scope" ng-if="auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type == 'meat') && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <strong class="label-price ng-binding">
+                                            3 195,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </strong>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-6" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ЕЛТОМ"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] --><span
+              class="label-price ng-scope" ng-if="auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type == 'meat') && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <strong class="label-price ng-binding">
+                                            2 900,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </strong>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-7" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ООО Промэлектроника</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] --><span
+              class="label-price ng-scope" ng-if="auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type == 'meat') && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <strong class="label-price ng-binding">
+                                            2 890,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </strong>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+    </div><!-- end ngIf: auction_doc.current_stage >= 0 --><!-- end ngRepeat: stage in Rounds -->
+    <!-- ngIf: auction_doc.current_stage >= 0 -->
+    <div ng-if="auction_doc.current_stage >= 0" class="auction-round ng-scope past-round" id="round-header-3" ng-class="{'past-round':  (auction_doc.current_stage > (stage + auction_doc.initial_bids.length)),
+                        'current-round': ((auction_doc.current_stage >= stage)&amp;&amp;(auction_doc.current_stage <= (stage + auction_doc.initial_bids.length))),
+                        'future-round': auction_doc.current_stage < (stage + auction_doc.initial_bids.length)}"
+         ng-repeat="stage in Rounds">
+      <div class="row">
+        <div class="col-xs-12 stage-item stage-round">
+          <div class="stage-item-lining">
+            <div class="stage-info">
+              <div class="stage-info-lining">
+                <span class="stage-info-item stage-label ng-binding"><span translate="" class="ng-scope">Раунд</span> 3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-9" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div ng-if="$first" id="stage-8" class="ng-scope"></div><!-- end ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ТЕРСІТ ЕЛЕКТРОНІКС"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] --><span class="label-price ng-scope"
+                                                                                     ng-if="!auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <span class="label-price ng-binding">
+                                            3 195,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </span>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-10" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ЕЛТОМ"</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] --><span
+              class="label-price ng-scope" ng-if="auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type == 'meat') && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <strong class="label-price ng-binding">
+                                            2 700,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </strong>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+      <div id="stage-11" class="row auction-stage stage-item stage-bids ng-scope past-stage"
+           ng-repeat="initial_bid in auction_doc.initial_bids" ng-class="{'current-stage svg': auction_doc.current_stage == (stage + $index + 1),
+                            'future-stage':  auction_doc.current_stage < (stage + $index + 1),
+                            'past-stage':  auction_doc.current_stage > (stage + $index + 1),
+                            'my-bid-stage': auction_doc.stages[stage + $index + 1].bidder_id == bidder_id}">
+        <!-- ngIf: $first -->
+        <div class="stage-item-lining">
+          <!-- ngIf: auction_doc.current_stage != (stage + $index + 1) --><i
+          ng-if="auction_doc.current_stage != (stage + $index + 1)" class="stage-icon ng-scope"></i>
+          <!-- end ngIf: auction_doc.current_stage != (stage + $index + 1) -->
+          <!-- ngIf: auction_doc.current_stage == (stage + $index + 1) -->
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; auction_doc.stages[stage + $index + 1].bidder_id == bidder_id &amp;&amp; !(auction_doc.current_stage == (auction_doc.stages.length - 1))}">
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope"
+              ng-if="auction_doc.stages[stage + $index + 1].bidder_id != bidder_id ">ООО Промэлектроника</span>
+              <!-- end ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id  -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id  -->
+              <!-- ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) --><span
+              class="stage-info-item stage-amount ng-scope minimal-amount"
+              ng-if="(auction_doc.stages[stage + $index + 1]['type'] == 'bids')&amp;&amp;(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount']))"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time]">
+
+                                <!-- ngIf: auction_doc.stages[stage + $index + 1]['changed'] --><span
+              class="label-price ng-scope" ng-if="auction_doc.stages[stage + $index + 1]['changed']">
+
+                                    <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id == bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: auction_doc.stages[stage + $index + 1].bidder_id != bidder_id && auction_doc.auction_type == 'meat' && (auction_doc.current_stage < (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type == 'meat') && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" class="ng-scope">
+                                        <strong class="label-price ng-binding">
+                                            2 695,00
+                                          <!-- ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) --><span
+                                          class="amount-currency ng-binding ng-scope"
+                                          ng-if="!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount'])">грн</span>
+                                          <!-- end ngIf: !angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount']) -->
+                                        </strong>
+                                    </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                                </span><!-- end ngIf: auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: !auction_doc.stages[stage + $index + 1]['changed'] -->
+
+              <!-- ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) --><span
+              class="label-minimum ng-scope"
+              ng-if="((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time)"
+              translate="">минимум</span>
+              <!-- end ngIf: ((auction_doc.stages[stage + $index + 1].amount_features||auction_doc.stages[stage + $index + 1].amount) == (minimal_bid.amount_features||minimal_bid.amount)) && (auction_doc.stages[stage + $index + 1]['time'] == minimal_bid.time) -->
+                            </span>
+              <!-- end ngIf: (auction_doc.stages[stage + $index + 1]['type'] == 'bids')&&(!angular.isUndefined(auction_doc.stages[stage + $index + 1]['amount_features']||auction_doc.stages[stage + $index + 1]['amount'])) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: initial_bid in auction_doc.initial_bids -->
+    </div><!-- end ngIf: auction_doc.current_stage >= 0 --><!-- end ngRepeat: stage in Rounds -->
+    <!-- ngIf: auction_doc.current_stage >= 0 -->
+    <div class="auction-round ng-scope current-round" id="results-header" ng-if="auction_doc.current_stage >= 0"
+         ng-class="{'current-round': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1,
+                       'future-round': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') == -1}">
+      <div class="row">
+        <div class="col-xs-12 stage-item stage-round">
+          <div class="stage-item-lining">
+            <div class="stage-info">
+              <div class="stage-info-lining">
+                <!-- ngIf: (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1 --><span
+                ng-if="(auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1"
+                class="stage-info-item stage-label ng-scope"><span translate=""
+                                                                   class="ng-scope">Объявление результатов</span></span>
+                <!-- end ngIf: (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1 -->
+                <!-- ngIf: (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') == -1 -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ngRepeat: bid_info in auction_doc.results -->
+      <div class="row auction-stage stage-item stage-bids past-stage ng-scope" ng-class="{'past-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1,
+                            'future-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') == -1}"
+           ng-repeat="bid_info in auction_doc.results">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ТЕРСІТ ЕЛЕКТРОНІКС"</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="!angular.isUndefined(bid_info['amount_features']||bid_info['amount'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" ng="" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        3 195,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.results -->
+      <div class="row auction-stage stage-item stage-bids past-stage ng-scope" ng-class="{'past-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1,
+                            'future-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') == -1}"
+           ng-repeat="bid_info in auction_doc.results">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ "ЕЛТОМ"</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) --><span
+              class="stage-info-item stage-amount ng-scope default-amount"
+              ng-if="!angular.isUndefined(bid_info['amount_features']||bid_info['amount'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" ng="" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        2 700,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.results -->
+      <div class="row auction-stage stage-item stage-bids past-stage ng-scope" ng-class="{'past-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') != -1,
+                            'future-stage': (auction_doc.stages[auction_doc.current_stage].type||'').indexOf('announcement') == -1}"
+           ng-repeat="bid_info in auction_doc.results">
+        <div class="stage-item-lining">
+          <i class="stage-icon"></i>
+          <div class="stage-info">
+            <div class="stage-info-lining"
+                 ng-class="{'auction-with-two-prices': auction_doc.auction_type == 'meat' &amp;&amp; bid_info.bidder_id == bidder_id}">
+              <!-- ngIf: bid_info.bidder_id != bidder_id  --><span
+              class="stage-info-item stage-label ng-binding ng-scope" ng-if="bid_info.bidder_id != bidder_id ">ООО Промэлектроника</span>
+              <!-- end ngIf: bid_info.bidder_id != bidder_id  -->
+              <!-- ngIf: bid_info.bidder_id == bidder_id  -->
+              <!-- ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) --><span
+              class="stage-info-item stage-amount ng-scope minimal-amount"
+              ng-if="!angular.isUndefined(bid_info['amount_features']||bid_info['amount'])"
+              ng-class="{true: 'minimal-amount', false: 'default-amount'}[((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time]">
+
+                                <!-- ngIf: bid_info.bidder_id == bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: bid_info.bidder_id != bidder_id && auction_doc.auction_type == 'meat' && auction_doc.current_stage < (auction_doc.stages.length - 1) -->
+
+              <!-- ngIf: auction_doc.auction_type == 'meat' && (auction_doc.current_stage == (auction_doc.stages.length - 1)) -->
+              <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span
+              ng-if="(auction_doc.auction_type||'default') == 'default'" ng="" class="ng-scope">
+                                    <span class="label-price ng-binding">
+                                        2 695,00
+                                      <!-- ngIf: !angular.isUndefined(bid_info['amount']) --><span
+                                      class="amount-currency ng-binding ng-scope"
+                                      ng-if="!angular.isUndefined(bid_info['amount'])">грн</span>
+                                      <!-- end ngIf: !angular.isUndefined(bid_info['amount']) -->
+                                    </span>
+                                </span><!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+              <!-- ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time --><span
+              class="label-minimum ng-scope"
+              ng-if="((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) &amp;&amp; bid_info.time == minimal_bid.time"
+              translate="">минимум</span>
+              <!-- end ngIf: ((bid_info.amount_features||bid_info.amount) == (minimal_bid.amount_features||minimal_bid.amount)) && bid_info.time == minimal_bid.time -->
+                            </span>
+              <!-- end ngIf: !angular.isUndefined(bid_info['amount_features']||bid_info['amount']) -->
+            </div>
+          </div>
+        </div>
+      </div><!-- end ngRepeat: bid_info in auction_doc.results -->
+    </div><!-- end ngIf: auction_doc.current_stage >= 0 -->
+    <!-- ngIf: auction_doc.current_stage == (auction_doc.stages.length - 1) -->
+    <div class="row ng-scope" ng-if="auction_doc.current_stage == (auction_doc.stages.length - 1)">
+      <br>
+      <!-- ngIf: return_url -->
+    </div><!-- end ngIf: auction_doc.current_stage == (auction_doc.stages.length - 1) -->
+  </div>
+  <div class="container-fluid">
+    <div ng-show="((auction_doc.current_stage < 0)&amp;&amp;bidder_id)||follow_login_allowed"
+         class="panel panel-default bg-warning fixed-bottom">
+      <div class="panel-body bg-warning">
+        <div class="row">
+          <div class="col-xs-12">
+            <!-- ngIf: !bidder_id -->
+            <div ng-if="!bidder_id" class="container text-center ng-scope">
+              <!-- ngIf: !follow_login -->
+              <!-- ngIf: !follow_login -->
+              <!-- ngIf: follow_login --><a
+              ng-href="https://auction.openprocurement.org/tenders/5aea0205512240f4a39fa041a458c376_aa17bf7093f64a82b283475ac52ca157/login?bidder_id=98cfe8d198e945179b97515e93cf843e&amp;hash=cbeffaa510efa2cf4d1e9338032157c444310cbe"
+              class="btn btn-success btn-lg btn-block ng-scope" ng-if="follow_login"
+              href="https://auction.openprocurement.org/tenders/5aea0205512240f4a39fa041a458c376_aa17bf7093f64a82b283475ac52ca157/login?bidder_id=98cfe8d198e945179b97515e93cf843e&amp;hash=cbeffaa510efa2cf4d1e9338032157c444310cbe"><span
+              translate="" class="ng-scope">Вход</span></a><!-- end ngIf: follow_login -->
+
+            </div><!-- end ngIf: !bidder_id -->
+            <!-- ngIf: bidder_id && auction_doc.current_stage < 0 -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div ng-show="view_bids_form" class="panel panel-default bg-warning fixed-bottom ng-hide auction-with-one-price"
+         ng-class="{'auction-with-one-price': (auction_doc.auction_type||'default') == 'default'}">
+      <div class="panel-body bg-warning">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="container">
+              <!-- ngRepeat: alert in alerts -->
+              <form id="BidsForm" name="form.BidsForm" role="form" class="ng-pristine ng-invalid ng-invalid-required">
+                <label for="bid"><span translate="" class="ng-scope">Ваше предложение</span>:</label>
+                <!-- ngIf: (auction_doc.auction_type||'default') == 'default' --><span ng-init="max_bid_amount()"
+                                                                                       class="max_bid_amount ng-binding ng-scope"
+                                                                                       id="max_bid_amount"
+                                                                                       ng-if="(auction_doc.auction_type||'default') == 'default'"><span
+                id="max_bid_amount_price" class="ng-binding">3000,00</span> или меньше</span>
+                <!-- end ngIf: (auction_doc.auction_type||'default') == 'default' -->
+                <!-- ngIf: auction_doc.auction_type == 'meat' -->
+                <div class="input-group main-price-block">
+                  <div class="full-price-group col-md-8 col-sm-8"
+                       ng-class="{'col-md-3 col-sm-3 col-xs-11': auction_doc.auction_type == 'meat', 'col-md-8 col-sm-8': (auction_doc.auction_type||'default') == 'default'}">
+                    <!-- ngIf: auction_doc.auction_type == 'meat' -->
+                    <!-- ngIf: auction_doc.auction_type == 'meat' -->
+                    <input id="bid-amount-input" ng-disabled="!allow_bidding" min="0" ng-change="calculate_bid_temp()"
+                           class="form-control ng-pristine ng-untouched ng-empty ng-invalid ng-invalid-required"
+                           name="bid" ng-model="$root.form.bid" required="" format="">
+                  </div>
+                  <!-- ngIf: auction_doc.auction_type == 'meat' -->
+                  <!-- ngIf: auction_doc.auction_type == 'meat'  -->
+                  <div class="input-group-btn col-md-4 col-sm-4 pull-right">
+                    <!-- ngIf: allow_bidding -->
+                    <button id="place-bid-button" type="submit" ng-if="allow_bidding" ng-click="post_bid()"
+                            class="btn btn-success ng-scope" ng-class="{'active': form.active}" translate="">Сделать
+                      ставку
+                    </button><!-- end ngIf: allow_bidding -->
+                    <!-- ngIf: !allow_bidding -->
+                    <!-- ngIf: !allow_bidding -->
+                    <!-- ngIf: allow_bidding -->
+                    <button id="clear-bid-button" type="submit" ng-if="allow_bidding"
+                            ng-click="($root.form.full_price = '');($root.form.bid = '')"
+                            class="btn btn-primary ng-scope" translate="">Очистить
+                    </button><!-- end ngIf: allow_bidding -->
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- end ngIf: document_exists -->
+<!-- /.container -->
+<script type="text/ng-template" id="templates/growl/growl.html">
+  <div class="growl-container" ng-class="wrapperClasses()">
+    <div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages"
+         ng-class="alertClasses(message)">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"
+              ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;
+      </button>
+      <button type="button" class="close" aria-hidden="true" ng-show="showCountDown(message)">{{message.countdown}}
+      </button>
+      <h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>
+      <div class="growl-message"><span ngh-replace id="dir" content="message.text"></span></div>
+    </div>
+  </div>
+</script>
+<script type="text/ng-template" id="templates/menu.html">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <span class="glyphicon glyphicon-info-sign text-primary pull-right" aria-hidden="true"
+            style="font-size:2.5em; padding-left:0.2em"></span>
+      <h4>{{ auction_doc.tenderID }}</h4>
+      <p class="list-group-item-heading">
+        <strong ng-switch on="auction_doc.procuringEntity['name_'+ lang] == undefined" class="procuringEntity">
+          <span>{{ (auction_doc.procuringEntity['name_'+ lang]||auction_doc.procuringEntity.name||auction_doc.procuringEntity.name_en||auction_doc.procuringEntity.name_ru||"-") | characters:100 :true }}</span><span
+          class="tenderTitle"> : {{ (auction_doc['title_'+ lang]||auction_doc.title||auction_doc.title_en||auction_doc.title_ru||"-") | characters:100 :true}} <span
+          ng-if="auction_doc.lot">: {{(auction_doc.lot['title_'+ lang]||auction_doc.lot['title']||auction_doc.lot['title_en']||auction_doc.lot['title_ru']||"") | characters:300 :true}}</span></span>
+        </strong>
+      </p>
+      <p class="text-muted tenderDescription"><span>{{ ( auction_doc['description_'+ lang]||auction_doc.description||auction_doc.description||auction_doc.description||"" ) | characters:500 :true }} </span><span
+        ng-if="auction_doc.lot">: {{(auction_doc.lot['description_'+ lang]||auction_doc.lot['description']||auction_doc.lot['description_en']||auction_doc.lot['description_ru']||"") | characters:500 :true}}</span>
+      </p>
+      <p ng-repeat="item in auction_doc.items">
+        <span>{{ ( item['description_'+ lang] || item.description || item.description_en || item.description_ru || "-" ) | characters:100 :true }}</span>
+        - {{ item.quantity|formatnumber }} <span>{{item.unit['name_'+ lang]||item.unit.name||item.unit['name_en']||item.unit['name_ru']||item.unit.code||"-" }}</span>
+      </p>
+      <p class="list-group-item-heading minimalStep" ng-if="auction_doc.minimalStep.amount"><span translate>Step reduction of Bid</span>:
+        <strong>{{ auction_doc.minimalStep.amount|formatnumber }} {{ auction_doc.minimalStep.currency|translate
+          }}</strong></p>
+      <p class="list-group-item-heading tenderValue" ng-if="auction_doc.value.amount"><span translate>Start value</span>:
+        {{ auction_doc.value.amount|formatnumber }} {{ auction_doc.minimalStep.currency|translate }}</p>
+    </li>
+
+    <li ng-if="clients" class="list-group-item">
+      <p ng-repeat="(id, client) in clients">
+                    <span ng-switch on="id == client_id">
+                        <span ng-switch-when="false" translate>Client</span>
+                        <span ng-switch-when="true" translate>You</span>
+                    </span> - IP: {{ client.ip }}</p>
+    </li>
+
+    <li class="list-group-item">
+      <p>Browser ID:<span>{{browser_client_id}}</span></p>
+      <p>Client ID:<span>{{client_id}}</span></p>
+    </li>
+
+    <li ng-if="form.bid" class="list-group-item">
+      <h4 class="list-group-item-heading" translate>Your latest bid</h4>
+      <p>{{ form.bid }}
+      <p>
+    </li>
+    <li class="list-group-item">
+      <h4 class="list-group-item-heading" translate>Language</h4>
+      <div class="list-group-item-text">
+        <div class="btn-group">
+          <button type="button" ng-click="changeLanguage('en')" class="btn btn-default navbar-btn"
+                  ng-class="{'active': lang == 'en'}">English
+          </button>
+          <button type="button" ng-click="changeLanguage('uk')" class="btn btn-default navbar-btn"
+                  ng-class="{'active': lang == 'uk'}">Українська
+          </button>
+          <button type="button" ng-click="changeLanguage('ru')" class="btn btn-default navbar-btn"
+                  ng-class="{'active': lang == 'ru'}">Русский
+          </button>
+        </div>
+      </div>
+    </li>
+    <li ng-if="bidder_id" class="list-group-item"><a ng-href="logout"><span class="glyphicon glyphicon-log-out"
+                                                                            aria-hidden="true"></span> <span translate>Logout</span></a>
+    </li>
+  </ul>
+
+</script>
+
+<script>
+  let isVisible = false;
+
+  Array.from(document.querySelectorAll('.label-price.ng-binding'))
+    .forEach((i, index) => {
+      setTimeout(() => i.style.color = 'rgb(51, 51, 51)', 20000 * index);
+    });
+
+  setTimeout(() => {
+    document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.ng-hide.auction-with-one-price').style.display = 'block';
+
+    setTimeout(() => {
+      document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.ng-hide.auction-with-one-price').style.display = 'none';
+    }, 60000)
+  }, 5000)
+</script>
+
+</body>
+</html>
