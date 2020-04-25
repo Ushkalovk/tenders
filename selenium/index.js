@@ -28,7 +28,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`],
-            headless: false,
+            headless: true,
         });
 
         this.page = await this.browser.newPage();
