@@ -30,13 +30,11 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "puppeteer-proxy": "^2.1.0",
-    "selenium-webdriver": "^4.0.0-alpha.5",
     "socket.io": "^2.3.0",
     "static-favicon": "^2.0.0-alpha",
     "ws": "^7.2.1"
   },
   "devDependencies": {
-    "axios": "^0.19.2",
     "cross-env": "^7.0.0",
     "nodemon": "^2.0.2",
     "puppeteer": "^3.0.1"

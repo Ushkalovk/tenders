@@ -109,7 +109,7 @@ class Template {
       name,
       `<a href=${link} target="_blank">${shortLink}</a>`,
       creator,
-      `<select style='width=100%'></select>`,
+      `<select data-type="company"></select>`,
       status,
       timeForNextStep,
       `<button class='btn btn-primary' data-link="${dataTender.link}">${isWork ? 'Стоп' : 'Старт'}</button>`,

@@ -87,7 +87,7 @@ class Server {
       .then(resp => resp.json());
   }
 
-  startTender(link) {
+  startTender(link, companyName) {
     return fetch(`${this.baseUrl}/tender`, {
       method: 'PUT',
       headers: {
@@ -97,6 +97,7 @@ class Server {
         role: localStorage.getItem('role'),
         email: localStorage.getItem('email'),
         link,
+        companyName
       }),
     })
       .then(resp => resp.json());

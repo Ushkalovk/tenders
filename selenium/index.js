@@ -3,36 +3,36 @@
 const puppeteer = require('puppeteer');
 
 class Selenium {
-    constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName}) {
+    constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company}) {
         this.tender = require('../tenders/index');
         this.logs = require('../logs/index');
         this.currentIndex = currentMemberNumber;
         this.login = login;
         this.password = password;
         this.proxy = proxyIP;
+        this.proxyLogin = proxyLogin;
+        this.proxyPassword = proxyPassword;
         this.link = link;
-        // this.link = 'https://2ip.ru/';
         this.alert = false;
         this.username = username;
         this.usersBet = null;
         this.isBotOn = false;
         this.isStop = false;
+        this.company = company;
 
         this.createPage(isParseName)
     }
 
     async createPage(isParseName) {
         const proxyUrl = `http://${this.proxy}`;
-        const username = 'vladik25666';
-        const password = 'C6h9AiX';
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: true,
+            headless: false,
         });
 
         this.page = await this.browser.newPage();
-        await this.page.authenticate({username, password});
+        await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
         this.open(isParseName)
     }
@@ -40,28 +40,37 @@ class Selenium {
     async open(isParseName) {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
+
+            isParseName ? this.parseName() : this.search();
         } catch (e) {
-            // console.log(e)
-            this.tender.removeTender.remove({link: this.link, message: 'Битая ссылка'});
-            await this.stop();
+            if (e.message.includes('invalid URL')) {
+                this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
+            } else {
+                this.tender.sendMessageToClient({message: `Проверьте данные прокси следующей компании: ${this.company}`})
+            }
 
-            return
+            await this.tender.disableTender({link: this.link});
+            await this.stop(false);
         }
-
-        isParseName ? this.parseName() : this.search();
     }
 
     async parseName() {
-        await this.page.waitForSelector('.ivu-card-body div.bold', {timeout: 30000});
+        try {
+            await this.page.waitForSelector('.ivu-card-body div.bold', {timeout: 60000});
 
-        const text = await this.page.evaluate(() => {
-            const name = document.querySelector('.ivu-card-body div.bold');
+            const text = await this.page.evaluate(() => {
+                return document.querySelector('.ivu-card-body div.bold').innerText;
+            });
 
-            return name ? name.innerText : false;
-        });
-
-        text && this.tender.setTenderName({tenderName: text, link: this.link});
-        await this.stop(false);
+            this.tender.setTenderName({tenderName: text, link: this.link});
+            await this.stop(false);
+        } catch (e) {
+            e.name === 'TimeoutError' && this.tender.sendMessageToClient({
+                message: `Не получилось найти имя тендера со следующей ссылке: ${this.link}`
+            })
+        } finally {
+            await this.stop(false);
+        }
     }
 
     async parseTime() {
@@ -80,47 +89,55 @@ class Selenium {
     }
 
     async search() {
-        const parents = await this.page.evaluate(() => {
-            const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+        try {
+            const parents = await this.page.evaluate(() => {
+                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
 
-            return Array.from(parents).map(parent => {
-                const bet = parent.querySelector('.label-price.ng-binding');
-                const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
-                const betText = bet.innerText;
+                return Array.from(parents).map(parent => {
+                    const bet = parent.querySelector('.label-price.ng-binding');
+                    const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
+                    const betText = bet.innerText;
 
-                bet.focus();
-                const color = window.getComputedStyle(bet).getPropertyValue('color');
+                    bet.focus();
+                    const color = window.getComputedStyle(bet).getPropertyValue('color');
 
-                return {
-                    color,
-                    participant,
-                    betText
-                }
+                    return {
+                        color,
+                        participant,
+                        betText
+                    }
+                });
             });
-        });
 
-        if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
-            await this.stop(true);
+            if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
+                await this.stop(true);
 
-            return
-        }
-
-        if (!parents.length) {
-            this.search();
-
-            return
-        }
-
-        this.findPanelBet(parents.length);
-
-        for (const [index, parent] of parents.entries()) {
-            const {color, participant, betText} = parent;
-
-            if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index) {
-                await this.setLogs(participant, betText, parents.length);
+                return
             }
 
-            index === parents.length - 1 && this.search();
+            if (!parents.length) {
+                this.search();
+
+                return
+            }
+
+            this.findPanelBet(parents.length);
+
+            for (const [index, parent] of parents.entries()) {
+                const {color, participant, betText} = parent;
+
+                if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index) {
+                    await this.setLogs(participant, betText, parents.length);
+                }
+
+                index === parents.length - 1 && this.search();
+            }
+        } catch (e) {
+            if (e.message.includes('Target closed')) {
+                this.tender.sendMessageToClient({message: `Произошла ошибка. Перезапустите тендер со следующей ссылкой: ${this.link}`});
+                await this.tender.disableTender({link: this.link});
+                await this.stop(false);
+            }
         }
     }
 
@@ -149,16 +166,20 @@ class Selenium {
             !this.alert && this.makeABet();
             this.alert = true;
         } else {
-            this.alert && this.tender.sendMessageToClient({
-                bet: null,
-                link: this.link,
-                isModalBets: true,
-                isOpen: false
-            });
+            this.alert && this.closeFinedPanel();
 
             this.alert && this.usersBet && this.setLogs(this.isBotOn ? 'Бот' : this.username, `${this.usersBet} грн`, length);
             this.alert = false;
         }
+    }
+
+    closeFinedPanel() {
+        this.tender.sendMessageToClient({
+            bet: null,
+            link: this.link,
+            isModalBets: true,
+            isOpen: false
+        });
     }
 
     async makeABet() {
@@ -270,6 +291,7 @@ class Selenium {
 
     async stop(allow = true) {
         this.isStop = true;
+        this.closeFinedPanel();
         allow && this.tender.sendMessageToClient({isEnd: true, link: this.link});
 
         return this.browser.close();
@@ -284,8 +306,7 @@ class Selenium {
     }
 }
 
-module.exports = ({link, isParseName = false, currentMemberNumber, username, login, password, proxyIP}) => {
-    return new Selenium({link, currentMemberNumber, username, login, password, proxyIP, isParseName});
-};
+module.exports = (data) => new Selenium(data);
+
 
 

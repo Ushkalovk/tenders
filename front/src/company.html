@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Charts</title>
+  <title>Companies</title>
   <style>
     #loader {
       transition: all 0.3s ease-in-out;
@@ -144,7 +144,9 @@
                        required>
                 <input type="text" class="form-control" placeholder="Пароль (для smarttender): " data-type="password"
                        required>
-                <input type="text" class="form-control" placeholder="Прокси: " data-type="proxy">
+                <input type="text" class="form-control" placeholder="Прокси: " data-type="proxyIP">
+                <input type="text" class="form-control" placeholder="Логин (для прокси): " data-type="proxyLogin">
+                <input type="text" class="form-control" placeholder="Пароль (для прокси): " data-type="proxyPassword">
               </div>
               <button type="submit" class="btn btn-primary">Подтвердить</button>
             </form>
@@ -158,10 +160,14 @@
               <thead class="thead-light">
               <tr>
                 <th scope="col">Имя компании</th>
-                <th scope="col">Логин</th>
-                <th scope="col">Пароль</th>
+                <th scope="col">Логин (smarttender)</th>
+                <th scope="col">Пароль (smarttender)</th>
                 <th scope="col">Прокси</th>
+                <th scope="col">Логин (proxy)</th>
+                <th scope="col">Пароль (proxy)</th>
                 <th scope="col">Новый прокси</th>
+                <th scope="col">Новый логин (прокси)</th>
+                <th scope="col">Новый пароль (прокси)</th>
               </tr>
               </thead>
               <tbody></tbody>

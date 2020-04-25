@@ -29,21 +29,22 @@ if (window.location.pathname === '/index.html') {
 
       if (target.tagName === 'BUTTON') {
         const link = target.getAttribute('data-link');
+        const companyName = template.findRowByLink(link).children[4].children[0].value;
 
         target.setAttribute('disabled', 'true');
 
         if (target.classList.contains('btn-primary')) {
-          // target.textContent === 'Старт' ?
-            server.startTender(link)
+          target.textContent === 'Старт' ?
+            server.startTender(link, companyName)
               .then(resp => {
                 !resp.status && createErrorMessage(resp.message);
                 target.removeAttribute('disabled');
-            })
-            // server.stopTender(link)
-            //   .then(resp => {
-            //     !resp.status && createErrorMessage(resp.message);
-            //     target.removeAttribute('disabled');
-            //   });
+              }) :
+            server.stopTender(link)
+              .then(resp => {
+                !resp.status && createErrorMessage(resp.message);
+                target.removeAttribute('disabled');
+              });
         }
 
         if (target.classList.contains('btn-danger')) {

@@ -1,12 +1,12 @@
 const find = require('./find');
 
 module.exports = async (req, res) => {
-    const {name, proxy} = req.body;
+    const {name, text, proxyField} = req.body;
     const company = await find(name);
 
     if (company) {
-        company.proxy = proxy;
-        console.log(proxy)
+        company[proxyField] = text;
+        console.log(text, proxyField)
 
         company.save(err => {
             if (err) throw err;

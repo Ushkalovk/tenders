@@ -6,6 +6,8 @@ module.exports = mongoose.model('Company', {
     login: String,
     password: String,
     proxyIP: String,
+    proxyLogin: String,
+    proxyPassword: String
 });
 
 

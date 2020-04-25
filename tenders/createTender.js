@@ -7,12 +7,12 @@ module.exports = (req, res) => {
     const {creationsTime, link, creator, status, timeForNextStep, company} = req.body;
 
     Tender.findOne({'link': link}, async (err, tender) => {
-        const {login, password, proxyIP} = await find(company);
+        const {login, password, proxyIP, proxyLogin, proxyPassword} = await find(company);
 
         if (!tender) {
             const newTender = new Tender();
 
-            selenium({link, isParseName: true, login, password, proxyIP});
+            selenium({link, isParseName: true, login, password, proxyIP, proxyLogin, proxyPassword, company});
 
             newTender.creationsTime = creationsTime;
             newTender.name = '';

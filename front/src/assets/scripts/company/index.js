@@ -3,16 +3,20 @@ import {createErrorMessage} from '../error/index';
 
 const table = document.querySelector('#companiesTable tbody');
 
-const updateProxy = (data) => {
-  const {name, proxy} = data;
+const setValue = (name, text, proxyField) => {
+  const tr = Array.from(table.querySelectorAll('tr'))
+    .find(item => item.getAttribute('data-name') === name);
+
+  tr.querySelector(`[data-name=${proxyField}]`).textContent = text;
+};
+
+const updateField = (data) => {
+  const {name, text, proxyField} = data;
 
   server.updateProxy(data)
     .then(resp => {
       if (resp.status) {
-        const tr = Array.from(table.querySelectorAll('tr'))
-          .find(item => item.getAttribute('data-name') === name);
-
-        tr.children[3].textContent = proxy;
+        setValue(name, text, proxyField)
       }
     });
 };
@@ -25,8 +29,12 @@ const createRow = (data) => {
     <td scope="col">${data.name}</td>
     <td scope="col">${data.login}</td>
     <td scope="col">${data.password}</td>
-    <td scope="col">${data.proxy}</td>
-    <td scope="col"><input type="text" placeholder="Новый прокси: "></td>
+    <td scope="col" data-name="proxyIP">${data.proxyIP}</td>
+    <td scope="col" data-name="proxyLogin">${data.proxyLogin}</td>
+    <td scope="col" data-name="proxyPassword">${data.proxyPassword}</td>
+    <td scope="col"><input type="text" data-type='proxyIP' placeholder="Новый прокси: "></td>
+    <td scope="col"><input type="text" data-type='proxyLogin' placeholder="Новый логин (прокси): "></td>
+    <td scope="col"><input type="text" data-type='proxyPassword' placeholder="Новый пароль (прокси): "></td>
   `;
 
   table.appendChild(tr);
@@ -63,8 +71,15 @@ if (window.location.pathname === '/company.html') {
   });
 
   table.addEventListener('keypress', (e) => {
-    if (e.target.tagName === 'INPUT' && e.keyCode === 13) {
-      updateProxy({name: e.target.closest('tr').getAttribute('data-name'), proxy: e.target.value});
+    if (e.keyCode === 13 && e.target.tagName === 'INPUT') {
+      const proxyField = e.target.getAttribute('data-type');
+
+      updateField({
+        name: e.target.closest('tr').getAttribute('data-name'),
+        text: e.target.value,
+        proxyField
+      });
+
       e.target.value = '';
     }
   })

@@ -4,17 +4,27 @@ const activeTenders = require('./activeTenders');
 const Tender = require('../models/tender');
 const selenium = require('../selenium/index.js');
 
-module.exports = async(req, res) => {
-    const {email, role, link} = req.body;
+module.exports = async (req, res) => {
+    const {email, role, link, companyName} = req.body;
     const tender = await Tender.findOne({'link': link});
 
     if (tender.creator === email || role === 'admin') {
-        const {login, password, proxyIP} = await find(tender.company);
+        const {login, password, proxyIP, proxyLogin, proxyPassword} = await find(companyName);
 
         try {
             const currentMemberNumber = tender.logs.length > 0 ? tender.logs[tender.logs.length - 1].currentMemberNumber + 1 : 0;
 
-            activeTenders[link] = selenium({link, currentMemberNumber, username: email, login, password, proxyIP});
+            activeTenders[link] = selenium({
+                link,
+                currentMemberNumber,
+                username: email,
+                login,
+                password,
+                proxyIP,
+                proxyLogin,
+                proxyPassword,
+                company: companyName
+            });
             tender.isWork = true;
             sendMessageToClient({toggleTender: true, isWork: tender.isWork, link});
 
