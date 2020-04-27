@@ -2,7 +2,7 @@ const Company = require('../models/company');
 const find = require('./find');
 
 module.exports = async (req, res) => {
-    const {name, login, password, proxy, proxyLogin, proxyPassword} = req.body;
+    const {name, login, password, proxyIP, proxyLogin, proxyPassword} = req.body;
 
     const company = await find(name);
 
@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
         newCompany.name = name;
         newCompany.login = login;
         newCompany.password = password;
-        newCompany.proxyIP = proxy !== '' ? proxy : 'Отсутсвует';
+        newCompany.proxyIP = proxyIP !== '' ? proxyIP : 'Отсутсвует';
         newCompany.proxyLogin = proxyLogin;
         newCompany.proxyPassword = proxyPassword;
 

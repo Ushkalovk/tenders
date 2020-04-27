@@ -28,10 +28,11 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: false,
+            headless: false
         });
 
         this.page = await this.browser.newPage();
+        await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
         this.open(isParseName)
@@ -41,7 +42,7 @@ class Selenium {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
 
-            isParseName ? this.parseName() : this.search();
+            isParseName ? this.parseName() : this.auth();
         } catch (e) {
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
@@ -56,10 +57,10 @@ class Selenium {
 
     async parseName() {
         try {
-            await this.page.waitForSelector('.ivu-card-body div.bold', {timeout: 60000});
+            await this.page.waitForSelector('.ivu-card-body h1.bold', {timeout: 60000});
 
             const text = await this.page.evaluate(() => {
-                return document.querySelector('.ivu-card-body div.bold').innerText;
+                return document.querySelector('.ivu-card-body h1.bold').innerText;
             });
 
             this.tender.setTenderName({tenderName: text, link: this.link});
@@ -73,22 +74,24 @@ class Selenium {
         }
     }
 
-    async parseTime() {
+    async parseTime(time = '') {
         if (this.isStop) {
             return
         }
 
-        const time = await this.page.evaluate(() => {
+        const currentTime = await this.page.evaluate(() => {
             const text = document.querySelector('timer.ng-scope.ng-isolate-scope');
 
             return text ? text.innerText : false;
         });
 
-        time && this.tender.setTimeForNextStep({timer: time, link: this.link});
-        this.parseTime();
+        currentTime && currentTime !== time && this.tender.setTimeForNextStep({timer: currentTime, link: this.link});
+        this.parseTime(currentTime);
     }
 
     async search() {
+        await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 1000 * 60 * 20});
+
         try {
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
@@ -116,6 +119,7 @@ class Selenium {
             }
 
             if (!parents.length) {
+                console.log(parents.length, 'text array length');
                 this.search();
 
                 return
@@ -225,9 +229,9 @@ class Selenium {
 
     async reEnter() {
         try {
-            await this.driver.findElement(this.By.css('a.btn.btn-success.btn-lg.btn-block.ng-scope')).click();
-            await this.driver.sleep(4000);
-            await this.driver.findElement(this.By.css('.btn.btn-success')).click();
+            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope', {timeout: 1000 * 60 * 60});
+            await this.page.click('a.btn.btn-success.btn-lg.btn-block.ng-scope');
+            await this.page.click('.btn.btn-success');
 
             this.search();
         } catch (e) {
@@ -236,57 +240,42 @@ class Selenium {
     }
 
     async switchToSecondWindow() {
-        await this.driver.wait(async () => (await this.driver.getAllWindowHandles()).length === 2, 60000);
-        const originalWindows = await this.driver.getWindowHandle();
-        const windows = await this.driver.getAllWindowHandles();
-
-        for await (const handle of windows) {
-            if (handle !== originalWindows) {
-                await this.driver.switchTo().window(handle);
-            }
-        }
-
-        await this.driver.sleep(10000);
-
         try {
-            await this.driver.wait(
-                this.until.elementLocated(
-                    this.By.css('.btn.btn-success')
-                ), 100000
-            ).click();
-            // await this.driver.findElement(this.By.css('.btn.btn-success')).click();
-            this.parseTime();
+            await this.page.click('.btn.btn-success');
+
             this.search();
         } catch (e) {
-            console.log('failed')
-            this.parseTime();
             this.reEnter();
+        } finally {
+            this.parseTime();
         }
     }
 
     async moveToLot() {
-        const click = async (span) => {
-            try {
-                await span.click();
-                this.switchToSecondWindow();
-            } catch (e) {
-                await click(span)
+        const currentURL = await this.page.url();
+
+        this.browser.on('targetcreated', async (target) => {
+            if (target.type() === 'page') {
+                const page = await target.page();
+                const url = page.url();
+
+                if (url !== currentURL) {
+                    await this.page.close();
+                    this.page = page;
+                    this.switchToSecondWindow();
+                }
             }
+        });
+
+        const spanClick = async () => {
+            await this.page.click('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
+            await this.page.url() === currentURL && await spanClick()
         };
 
-        await this.driver.wait(
-            this.until.elementLocated(
-                this.By.css('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat')
-            ), 60000
-        ).click();
+        await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
+        await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
 
-        const span = await this.driver.wait(
-            this.until.elementLocated(
-                this.By.css('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span')
-            ), 60000
-        );
-
-        await click(span)
+        await spanClick();
     }
 
     async stop(allow = true) {
@@ -294,7 +283,7 @@ class Selenium {
         this.closeFinedPanel();
         allow && this.tender.sendMessageToClient({isEnd: true, link: this.link});
 
-        return this.browser.close();
+        return await this.browser.close();
     }
 
     changeUsername(username) {
