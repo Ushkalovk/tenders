@@ -90,9 +90,9 @@ class Selenium {
     }
 
     async search() {
-        await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 1000 * 60 * 20});
-
         try {
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 1000 * 60 * 20});
+
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
 
@@ -137,11 +137,11 @@ class Selenium {
                 index === parents.length - 1 && this.search();
             }
         } catch (e) {
-            if (e.message.includes('Target closed')) {
+            // if (e.message.includes('Target closed')) {
                 this.tender.sendMessageToClient({message: `Произошла ошибка. Перезапустите тендер со следующей ссылкой: ${this.link}`});
                 await this.tender.disableTender({link: this.link});
                 await this.stop(false);
-            }
+            // }
         }
     }
 
@@ -241,11 +241,16 @@ class Selenium {
 
     async switchToSecondWindow() {
         try {
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
             await this.page.click('.btn.btn-success');
 
             this.search();
         } catch (e) {
-            this.reEnter();
+            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope', {timeout: 1000 * 60 * 60 * 6});
+            await this.page.click('a.btn.btn-success.btn-lg.btn-block.ng-scope');
+            await this.page.click('.btn.btn-success');
+
+            this.search();
         } finally {
             this.parseTime();
         }
@@ -268,14 +273,27 @@ class Selenium {
         });
 
         const spanClick = async () => {
-            await this.page.click('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
-            await this.page.url() === currentURL && await spanClick()
+            try {
+                await this.page.click('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
+                await spanClick();
+            } catch (e) {
+                console.log(e.message, 'fail')
+            }
         };
 
         await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
         await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
 
-        await spanClick();
+
+        try {
+            await this.page.waitForSelector('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
+
+            this.tender.sendMessageToClient({message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`});
+            await this.tender.disableTender({link: this.link});
+            await this.stop(false);
+        } catch (e) {
+            await spanClick();
+        }
     }
 
     async stop(allow = true) {
