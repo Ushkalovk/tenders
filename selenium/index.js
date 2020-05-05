@@ -1,6 +1,7 @@
 "use strict";
 
 const puppeteer = require('puppeteer');
+const activeTenders = require('../tenders/activeTenders');
 
 class Selenium {
     constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company}) {
@@ -28,7 +29,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: false
+            headless: true
         });
 
         this.page = await this.browser.newPage();
@@ -38,9 +39,20 @@ class Selenium {
         this.open(isParseName)
     }
 
+    async checkDocument() {
+        const doc = await this.page.evaluate(() => document.querySelector('body'));
+
+        if (!doc) {
+            this.tender.sendMessageToClient({message: `Проверьте срок действия прокси компании ${this.company}`});
+            await this.tender.disableTender({link: this.link});
+            await this.stop(false);
+        }
+    }
+
     async open(isParseName) {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
+            this.checkDocument();
 
             isParseName ? this.parseName() : this.auth();
         } catch (e) {
@@ -57,17 +69,19 @@ class Selenium {
 
     async parseName() {
         try {
-            await this.page.waitForSelector('.ivu-card-body h1.bold', {timeout: 60000});
+            await this.page.waitForSelector('.ivu-card-body [data-qa=title]', {timeout: 60000});
 
             const text = await this.page.evaluate(() => {
-                return document.querySelector('.ivu-card-body h1.bold').innerText;
+                return document.querySelector('.ivu-card-body [data-qa=title]').innerText;
             });
+
+            console.log(text)
 
             this.tender.setTenderName({tenderName: text, link: this.link});
             await this.stop(false);
         } catch (e) {
             e.name === 'TimeoutError' && this.tender.sendMessageToClient({
-                message: `Не получилось найти имя тендера со следующей ссылке: ${this.link}`
+                message: `Не получилось найти имя тендера со следующей ссылкой: ${this.link}`
             })
         } finally {
             await this.stop(false);
@@ -79,14 +93,18 @@ class Selenium {
             return
         }
 
-        const currentTime = await this.page.evaluate(() => {
-            const text = document.querySelector('timer.ng-scope.ng-isolate-scope');
+        try {
+            const currentTime = await this.page.evaluate(() => {
+                const text = document.querySelector('timer.ng-scope.ng-isolate-scope');
 
-            return text ? text.innerText : false;
-        });
+                return text ? text.innerText : false;
+            });
 
-        currentTime && currentTime !== time && this.tender.setTimeForNextStep({timer: currentTime, link: this.link});
-        this.parseTime(currentTime);
+            currentTime && currentTime !== time && this.tender.setTimeForNextStep({timer: currentTime, link: this.link});
+            this.parseTime(currentTime);
+        } catch (e) {
+            console.log('упс')
+        }
     }
 
     async search() {
@@ -138,9 +156,9 @@ class Selenium {
             }
         } catch (e) {
             // if (e.message.includes('Target closed')) {
-                this.tender.sendMessageToClient({message: `Произошла ошибка. Перезапустите тендер со следующей ссылкой: ${this.link}`});
-                await this.tender.disableTender({link: this.link});
-                await this.stop(false);
+            this.tender.sendMessageToClient({message: `Произошла ошибка. Перезапустите тендер со следующей ссылкой: ${this.link}`});
+            await this.tender.disableTender({link: this.link});
+            await this.stop(false);
             // }
         }
     }
@@ -227,16 +245,22 @@ class Selenium {
         this.moveToLot();
     }
 
-    async reEnter() {
-        try {
-            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope', {timeout: 1000 * 60 * 60});
-            await this.page.click('a.btn.btn-success.btn-lg.btn-block.ng-scope');
-            await this.page.click('.btn.btn-success');
+    async reStart() {
+        this.isStop = true;
 
-            this.search();
-        } catch (e) {
-            this.reEnter();
-        }
+        activeTenders[this.link] = new Selenium({
+            link: this.link,
+            currentMemberNumber: this.currentIndex,
+            username: this.username,
+            login: this.login,
+            password: this.password,
+            proxyIP: this.proxy,
+            proxyLogin: this.proxyLogin,
+            proxyPassword: this.proxyPassword,
+            company: this.company
+        });
+
+        await this.browser.close();
     }
 
     async switchToSecondWindow() {
@@ -244,15 +268,12 @@ class Selenium {
             await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
             await this.page.click('.btn.btn-success');
 
+            this.parseTime();
             this.search();
         } catch (e) {
-            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope', {timeout: 1000 * 60 * 60 * 6});
-            await this.page.click('a.btn.btn-success.btn-lg.btn-block.ng-scope');
-            await this.page.click('.btn.btn-success');
-
-            this.search();
-        } finally {
             this.parseTime();
+            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope span', {timeout: 1000 * 60 * 60 * 6});
+            this.reStart();
         }
     }
 
@@ -261,6 +282,7 @@ class Selenium {
 
         this.browser.on('targetcreated', async (target) => {
             if (target.type() === 'page') {
+                console.log('new Page');
                 const page = await target.page();
                 const url = page.url();
 
