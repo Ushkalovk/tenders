@@ -75,8 +75,6 @@ class Selenium {
                 return document.querySelector('.ivu-card-body [data-qa=title]').innerText;
             });
 
-            console.log(text)
-
             this.tender.setTenderName({tenderName: text, link: this.link});
             await this.stop(false);
         } catch (e) {
@@ -250,7 +248,7 @@ class Selenium {
 
         activeTenders[this.link] = new Selenium({
             link: this.link,
-            currentMemberNumber: this.currentIndex,
+            currentMemberNumber: 0,
             username: this.username,
             login: this.login,
             password: this.password,
