@@ -13,12 +13,12 @@ class Selenium {
         this.proxyLogin = proxyLogin;
         this.proxyPassword = proxyPassword;
         this.link = link;
-        this.alert = false;
         this.username = username;
         this.usersBet = null;
         this.isBotOn = false;
         this.isStop = false;
         this.company = company;
+        this.length = 0;
 
         this.createPage(isParseName)
     }
@@ -28,11 +28,11 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: true
+            headless: false
         });
 
         this.page = await this.browser.newPage();
-        await this.page.setViewport({'width': 1920, 'height': 1080});
+        // await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
         this.open(isParseName)
@@ -53,7 +53,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.auth();
+            isParseName ? this.parseName() : this.switchToSecondWindow();
         } catch (e) {
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
@@ -147,14 +147,14 @@ class Selenium {
                 return
             }
 
-            this.findPanelBet(parents.length);
+            this.length = parents.length;
 
             for (const [index, parent] of parents.entries()) {
                 const {color, participant, betText} = parent;
 
                 if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index) {
                     console.log(`${this.currentIndex}: currentIndex`, `${index}: index`);
-                    await this.setLogs(participant, betText, parents.length);
+                    await this.setLogs(participant, betText);
                 }
 
                 index === parents.length - 1 && this.search();
@@ -169,10 +169,10 @@ class Selenium {
         }
     }
 
-    setLogs(participant, bet, length) {
+    setLogs(participant, bet) {
         return this.logs.setLogs({
             link: this.link,
-            numberOfParticipants: length,
+            numberOfParticipants: this.length,
             logs: {
                 participant,
                 bet,
@@ -182,23 +182,32 @@ class Selenium {
         });
     }
 
-    async findPanelBet(length) {
-        const displayValue = await this.page.evaluate(() => {
-            const display = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
-            display.focus();
+    async findPanelBet() {
+        if (this.isStop) {
+            return
+        }
 
-            return window.getComputedStyle(display).getPropertyValue('display');
+        // ждём, пока панель не появится
+
+        await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
+            timeout: 1000 * 60 * 20,
+            visible: true
         });
 
-        if (displayValue !== 'none') {
-            !this.alert && this.makeABet();
-            this.alert = true;
-        } else {
-            this.alert && this.closeFinedPanel();
+        this.parseMinBet(); // уведомляем, что панель открыта
 
-            this.alert && this.usersBet && this.setLogs(this.isBotOn ? 'Бот' : this.username, `${this.usersBet} грн`, length);
-            this.alert = false;
-        }
+        // ждём пока не закроется
+
+        await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
+            timeout: 1000 * 60 * 20,
+            hidden: true
+        });
+
+        // уведомляем, что панель закрыта
+        this.usersBet && this.setLogs(this.isBotOn ? 'Бот' : this.username, `${this.usersBet} грн`);
+        this.closeFinedPanel();
+
+        this.findPanelBet();
     }
 
     closeFinedPanel() {
@@ -210,17 +219,17 @@ class Selenium {
         });
     }
 
-    async makeABet() {
-        const color = await this.page.evaluate(() => {
-            const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
-            const input = panel.querySelector('#bid-amount-input');
-            input.focus();
-
-            return window.getComputedStyle(input).getPropertyValue('background-color');
-        });
-
-        color !== `rgb(238, 238, 238)` && this.parseMinBet()
-    }
+    // async makeABet() {
+    //     const color = await this.page.evaluate(() => {
+    //         const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
+    //         const input = panel.querySelector('#bid-amount-input');
+    //         input.focus();
+    //
+    //         return window.getComputedStyle(input).getPropertyValue('background-color');
+    //     });
+    //
+    //     color !== `rgb(238, 238, 238)` && this.parseMinBet()
+    // }
 
     async parseMinBet() {
         const bet = await this.page.evaluate(() => {
@@ -268,11 +277,12 @@ class Selenium {
 
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
-            await this.page.click('.btn.btn-success');
+            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            // await this.page.click('.btn.btn-success');
 
             this.parseTime();
             this.search();
+            this.findPanelBet();
         } catch (e) {
             this.parseTime();
             await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope span', {timeout: 1000 * 60 * 60 * 6});
