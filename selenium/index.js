@@ -97,7 +97,10 @@ class Selenium {
                 return text ? text.innerText : false;
             });
 
-            currentTime && currentTime !== time && this.tender.setTimeForNextStep({timer: currentTime, link: this.link});
+            currentTime && currentTime !== time && this.tender.setTimeForNextStep({
+                timer: currentTime,
+                link: this.link
+            });
             this.parseTime(currentTime);
         } catch (e) {
             console.log('упс')
@@ -150,6 +153,7 @@ class Selenium {
                 const {color, participant, betText} = parent;
 
                 if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index) {
+                    console.log(`${this.currentIndex}: currentIndex`, `${index}: index`);
                     await this.setLogs(participant, betText, parents.length);
                 }
 
