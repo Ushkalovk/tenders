@@ -71,7 +71,7 @@ module.exports = (passport) => {
     router.route('/tender')
         .get((req, res) => tender.getAllTenders(req, res))
         .post((req, res) => tender.createTender(req, res))
-        .put((req, res) => tender.setNewTender(req, res))
+        .put((req, res) => tender.setNewTender.find(req, res))
         .delete((req, res) => tender.removeTender.find(req, res));
 
     router.route('/company')

@@ -1,7 +1,6 @@
 "use strict";
 
 const puppeteer = require('puppeteer');
-const activeTenders = require('../tenders/activeTenders');
 
 class Selenium {
     constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company}) {
@@ -54,7 +53,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.auth();
+            isParseName ? this.parseName() : this.search();
         } catch (e) {
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
@@ -106,6 +105,10 @@ class Selenium {
     }
 
     async search() {
+        if (this.isStop) {
+            return
+        }
+
         try {
             await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 1000 * 60 * 20});
 
@@ -153,8 +156,9 @@ class Selenium {
                 index === parents.length - 1 && this.search();
             }
         } catch (e) {
+            console.log(e.message)
             // if (e.message.includes('Target closed')) {
-            this.tender.sendMessageToClient({message: `Произошла ошибка. Перезапустите тендер со следующей ссылкой: ${this.link}`});
+            this.tender.sendMessageToClient({message: `Тендер со следующей ссылкой: ${this.link} закрыт`});
             await this.tender.disableTender({link: this.link});
             await this.stop(false);
             // }
@@ -244,26 +248,23 @@ class Selenium {
     }
 
     async reStart() {
-        this.isStop = true;
+        await this.stop(false);
 
-        activeTenders[this.link] = new Selenium({
+        await this.tender.setNewTender.run({
             link: this.link,
-            currentMemberNumber: 0,
-            username: this.username,
             login: this.login,
             password: this.password,
             proxyIP: this.proxy,
             proxyLogin: this.proxyLogin,
             proxyPassword: this.proxyPassword,
-            company: this.company
+            email: this.username,
+            companyName: this.company
         });
-
-        await this.browser.close();
     }
 
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            await this.page.waitForSelector('.btn.btn-successfd', {timeout: 10000});
             await this.page.click('.btn.btn-success');
 
             this.parseTime();
