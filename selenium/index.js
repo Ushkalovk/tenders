@@ -268,7 +268,7 @@ class Selenium {
 
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-successfd', {timeout: 10000});
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
             await this.page.click('.btn.btn-success');
 
             this.parseTime();
