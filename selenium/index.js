@@ -53,7 +53,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.search();
+            isParseName ? this.parseName() : this.auth();
         } catch (e) {
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
