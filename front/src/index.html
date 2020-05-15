@@ -180,7 +180,8 @@
           <div class="mT-30">
             <form>
               <div class="form-group">
-                <input type="text" class="form-control" placeholder="Введите ссылку на тендер: ">
+                <input type="text" data-type="link" class="form-control" placeholder="Введите ссылку на тендер: " required>
+                <input type="number" data-type="bet" class="form-control" placeholder="Min ставка" step="1" min="0" required>
                 <select id="linkSelect" required>
                   <option value="">Выберите компанию</option>
                 </select>
@@ -202,6 +203,7 @@
                 <th>Ссылка</th>
                 <th>Менеджер</th>
                 <th>Компания</th>
+                <th>Мин. ставка</th>
                 <th>Статус</th>
                 <th>Время сл. этапа</th>
                 <th></th>

@@ -8,8 +8,6 @@ const titles = {
   'signin': 'Signin',
   'signup': 'Signup',
   'company': 'Company',
-  // 'template': 'Template',
-  'ui': 'UI',
   '404': '404',
   '500': '500',
 };

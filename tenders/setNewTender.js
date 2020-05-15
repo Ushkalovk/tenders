@@ -51,7 +51,9 @@ module.exports = {
                     proxyIP,
                     proxyLogin,
                     proxyPassword,
-                    company: companyName
+                    minBet: tender.minBet,
+                    company: companyName,
+                    isBotOn: tender.isBotOn
                 });
             }
         });

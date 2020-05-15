@@ -12,12 +12,15 @@ module.exports = mongoose.model('Tender', {
     isBotOn: Boolean,
     isWork: Boolean,
     allowToDelete: Boolean,
+    panelBid: String,
+    minBet: Number,
     logs: [
         {
             participant: String,
             bet: String,
             currentMemberNumber: Number,
-            bitTime: Date
+            bitTime: Date,
+            round: Number
         }
     ]
 });

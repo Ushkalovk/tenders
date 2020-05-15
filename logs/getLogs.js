@@ -5,7 +5,7 @@ module.exports = (req, res) => {
 
     Tender.findOne({'link': link}, (err, tender) => {
         try {
-            const {logs, numberOfParticipants, isBotOn, timeForNextStep} = tender;
+            const {logs, numberOfParticipants, isBotOn, timeForNextStep, panelBid} = tender;
 
             res.json(
                 {
@@ -15,7 +15,8 @@ module.exports = (req, res) => {
                         numberOfParticipants
                     },
                     isBotOn,
-                    timer: timeForNextStep
+                    timer: timeForNextStep,
+                    panelBid
                 }
             )
         } catch (error) {

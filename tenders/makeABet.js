@@ -7,13 +7,13 @@ module.exports = async (req, res) => {
 
     if (tender.creator === email || role === 'admin') {
         try {
-            activeTenders[link].changeUsername(email);
-            activeTenders[link].enterBet(bet);
-            res.json({status: true, message: 'Ставка принята'})
+            activeTenders[link].enterBet(bet, email);
+
+            await res.json({status: true, message: 'Ставка принята'})
         } catch (e) {
-            res.json({status: false, message: 'Ставку не удалось поставить'})
+            await res.json({status: false, message: 'Ставку не удалось поставить'})
         }
     } else {
-        res.json({status: false, message: 'Делать ставку может только создатель или админ'})
+        await res.json({status: false, message: 'Делать ставку может только создатель или админ'})
     }
 };

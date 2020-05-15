@@ -9,16 +9,10 @@ class Template {
     this.tableLogs = document.querySelector('#tableLogs tbody');
     this.activeLink = null;
 
-    this.modalBets = {};
-    this.activeBots = {};
     this.companies = [];
   }
 
-  setModalBets({link, bet}) {
-    this.modalBets[link] = bet;
-  }
-
-  showLogs(object, index, length) {
+  showLogs(object, index) {
     const tr = document.createElement('tr');
 
     for (let i = 0; i < 5; i++) {
@@ -27,8 +21,8 @@ class Template {
 
     tr.children[0].textContent = `${index + 1}`;
     tr.children[1].textContent = this.transformTime(new Date((Date.parse(object.bitTime))));
-    tr.children[2].textContent = object.participant + 1;
-    tr.children[3].textContent = `${Math.floor(index / (length / 5)) + 1}`;
+    tr.children[2].textContent = object.participant;
+    tr.children[3].textContent = `${object.round}`;
     tr.children[4].textContent = object.bet;
 
     this.tableLogs.appendChild(tr);
@@ -64,7 +58,7 @@ class Template {
     return `${dayOfMonth}.${month}.${year} - ${hour}:${minutes}`;
   }
 
-  createTender(link, company) {
+  createTender(link, company, minBet) {
     console.log(link, company)
     const dataTender = {
       creationsTime: this.transformTime(new Date()),
@@ -75,6 +69,7 @@ class Template {
       status: 'Не начался',
       timeForNextStep: '',
       newTender: true,
+      minBet,
     };
 
     return dataTender;
@@ -98,7 +93,7 @@ class Template {
   }
 
   addRow(dataTender) {
-    const {creationsTime, name, link, creator, status, timeForNextStep, isBotOn = false, isWork, company} = dataTender;
+    const {creationsTime, name, link, creator, status, timeForNextStep, isWork, company, minBet} = dataTender;
     const shortLink = link.length > 15 ?
       `${link.split('')
         .splice(0, 15)
@@ -109,7 +104,8 @@ class Template {
       name,
       `<a href=${link} target="_blank">${shortLink}</a>`,
       creator,
-      `<select data-type="company"></select>`,
+      '<select data-type="company"></select>',
+      `${minBet} грн`,
       status,
       timeForNextStep,
       `<button class='btn btn-primary' data-link="${dataTender.link}">${isWork ? 'Стоп' : 'Старт'}</button>`,
@@ -120,8 +116,6 @@ class Template {
       .draw();
 
     this.createSelect(link, company);
-
-    this.activeBots[link] = isBotOn;
   }
 
   createSelect(link, company) {
@@ -158,9 +152,7 @@ class Template {
 
       this.refreshCellText({cell, text: data.tenderName});
     } else if (data.timer) {
-      const cell = this.findRowByLink(data.link).children[6];
-
-      this.refreshCellText({cell, text: data.timer});
+      this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: data.timer});
 
       if (this.activeLink === data.link) {
         document.getElementById('timer').textContent = data.timer;
@@ -168,44 +160,29 @@ class Template {
     } else if (data.newTender) {
       this.addRow(data);
     } else if (data.toggleTender) {
-      const cell = this.findRowByLink(data.link).children[7];
-
       this.refreshCellText({
-        cell,
+        cell: this.findRowByLink(data.link).children[8],
         text: `<button class='btn btn-primary' data-link="${data.link}">${data.isWork ? 'Стоп' : 'Старт'}</button>`,
       });
     } else if (data.toggleBot) {
-      this.activeBots[this.activeLink] = !this.activeBots[this.activeLink];
       document.getElementById('bot').textContent = data.isBotOn ? 'Выключить бота' : 'Включить бота';
-
-      if (this.modalBets[this.activeLink]) {
-        server.makeABet(this.activeLink, this.modalBets[this.activeLink])
-          .then(resp => console.log(resp));
-      }
     } else if (data.isModalBets) {
-      this.setModalBets(data);
-      this.toggleVisibleModalBets(data.link);
-
-      if (this.activeBots[data.link]) {
-        server.makeABet(data.link, this.modalBets[data.link])
-          .then(resp => console.log(resp));
-      }
+      this.toggleVisibleModalBets(data.link, data.bet);
     }
 
     if (data.status) {
-      const cell = this.findRowByLink(data.link).children[5];
-      this.refreshCellText({cell, text: data.status});
+      this.refreshCellText({cell: this.findRowByLink(data.link).children[6], text: data.status});
     }
   }
 
-  toggleVisibleModalBets(link) {
+  toggleVisibleModalBets(link, bet) {
     const popup = document.getElementById('popupMakeABet');
 
-    if (this.modalBets[link] && this.activeLink === link) {
+    if (this.activeLink === link && bet) {
       document.getElementById('footer').style.display = 'none';
       popup.style.display = 'block';
       popup.setAttribute('link', link);
-      popup.querySelector('.textBet').textContent = this.modalBets[link];
+      popup.querySelector('.textBet').textContent = ` ${bet}`;
     } else {
       document.getElementById('footer').style.display = 'block';
       popup.style.display = 'none';
@@ -234,10 +211,10 @@ class Template {
       .appendChild(elem);
   }
 
-  showBets({logs, numberOfParticipants}, link, isBotOn, timer) {
+  showBets({logs, numberOfParticipants}, link, isBotOn, timer, panelBid) {
     this.activeLink = link;
 
-    this.toggleVisibleModalBets(link);
+    panelBid && this.toggleVisibleModalBets(link, panelBid);
 
     document.getElementById('mainInfo').style.display = 'none';
     document.getElementById('betsPage').style.display = 'flex';

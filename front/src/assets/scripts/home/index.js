@@ -18,6 +18,14 @@ const setUserInfo = () => {
 
 if (window.location.pathname !== '/signin.html' && window.location.pathname !== '/signup.html') {
   setUserInfo();
+
+  if (!localStorage.getItem('email')) {
+    window.location.href = './signin.html';
+  }
+} else {
+  if (localStorage.getItem('email')) {
+    window.location.href = './index.html';
+  }
 }
 
 if (window.location.pathname === '/index.html') {
@@ -64,16 +72,18 @@ if (window.location.pathname === '/index.html') {
               console.log(response);
               if (response.status) {
                 template.removePreviousTr();
-                response.object.logs.forEach((object, index) => template.showLogs(object, index, response.object.logs.length));
+                response.object.logs.forEach((object, index) => template.showLogs(object, index));
               }
             });
         }
 
         if (target.classList.contains('btn-info')) {
-          target.removeAttribute('disabled');
-
           server.getLogs(link)
-            .then(response => response.status && template.showBets(response.object, link, response.isBotOn, response.timer));
+            .then(response => {
+              target.removeAttribute('disabled');
+
+              response.status && template.showBets(response.object, link, response.isBotOn, response.timer, response.panelBid);
+            });
         }
       }
     });
@@ -82,12 +92,13 @@ if (window.location.pathname === '/index.html') {
     .addEventListener('submit', (event) => {
       event.preventDefault();
 
-      const input = document.querySelector('#linkInput input');
+      const inputLink = document.querySelector('#linkInput [data-type=link]');
+      const inputBet = document.querySelector('#linkInput [data-type=bet]');
       const select = document.querySelector('#linkInput select');
       const button = document.querySelector('#linkInput button');
 
-      if (input.value && select.value) {
-        const dataTender = template.createTender(input.value, select.value);
+      if (inputLink.value && select.value && inputBet.value) {
+        const dataTender = template.createTender(inputLink.value, select.value, inputBet.value);
 
         server.createTender(dataTender)
           .then(response => {
@@ -95,7 +106,8 @@ if (window.location.pathname === '/index.html') {
             button.removeAttribute('disabled');
           });
 
-        input.value = '';
+        inputLink.value = '';
+        inputBet.value = '';
         button.setAttribute('disabled', 'true');
       }
     });
@@ -103,6 +115,7 @@ if (window.location.pathname === '/index.html') {
   document.getElementById('logout')
     .addEventListener('click', (event) => {
       event.preventDefault();
+      localStorage.setItem('email', '');
       server.logout();
     });
 
@@ -116,7 +129,7 @@ if (window.location.pathname === '/index.html') {
     });
 
   document.getElementById('bot')
-    .addEventListener('click', function (e) {
+    .addEventListener('click', () => {
       this.setAttribute('disabled', 'true');
       server.toggleBot(template.activeLink)
         .then(response => {
@@ -151,7 +164,6 @@ if (window.location.pathname === '/index.html') {
   document.querySelector('#dataTable_length label').firstChild.textContent = 'Вывести ';
   document.querySelector('#dataTable_length label').lastChild.textContent = ' элементов';
   document.querySelector('.dataTables_empty').textContent = 'Данных нет';
-
 }
 
 

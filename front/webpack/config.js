@@ -1,19 +1,3 @@
-// ------------------
-// @Table of Contents
-// ------------------
-
-/**
- * + @Loading Dependencies
- * + @Entry Point Setup
- * + @Path Resolving
- * + @Exporting Module
- */
-
-
-// ---------------------
-// @Loading Dependencies
-// ---------------------
-
 const
   path = require('path'),
   manifest = require('./manifest'),
@@ -22,19 +6,9 @@ const
   plugins = require('./plugins');
 
 
-// ------------------
-// @Entry Point Setup
-// ------------------
-
-const
-  entry = [
-    path.join(manifest.paths.src, 'assets', 'scripts', manifest.entries.js),
-  ];
-
-
-// ---------------
-// @Path Resolving
-// ---------------
+const entry = [
+  path.join(manifest.paths.src, 'assets', 'scripts', manifest.entries.js),
+];
 
 const resolve = {
   extensions: ['.webpack-loader.js', '.web-loader.js', '.loader.js', '.js'],
@@ -43,11 +17,6 @@ const resolve = {
     path.join(manifest.paths.src, ''),
   ],
 };
-
-
-// -----------------
-// @Exporting Module
-// -----------------
 
 module.exports = {
   devtool: manifest.IS_PRODUCTION ? false : 'cheap-eval-source-map',

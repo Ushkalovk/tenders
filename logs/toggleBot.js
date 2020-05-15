@@ -3,11 +3,7 @@ const sendMessageToClient = require("../tenders/sendMessageToClient");
 const activeTenders = require('../tenders/activeTenders');
 
 const toggleBotOnSelenium = (link, isBotOn) => {
-    try {
-        activeTenders[link].toggleBot(isBotOn);
-    } catch (e) {
-        console.log(e)
-    }
+    activeTenders[link] && activeTenders[link].toggleBot(isBotOn);
 };
 
 module.exports = async (req, res) => {
@@ -18,6 +14,7 @@ module.exports = async (req, res) => {
         try {
             tender.isBotOn = !tender.isBotOn;
             toggleBotOnSelenium(link, tender.isBotOn);
+
             tender.save(err => {
                 if (err) throw err;
 
@@ -28,6 +25,6 @@ module.exports = async (req, res) => {
             await res.json({status: false, message: 'Не получить включить бота'})
         }
     } else {
-        res.json({status: false, message: 'Включить бота может только создатель или админ'})
+        await res.json({status: false, message: 'Включить бота может только создатель или админ'})
     }
 };

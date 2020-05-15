@@ -4,7 +4,7 @@ const sendMessageToClient = require("./sendMessageToClient");
 const find = require('../company/find');
 
 module.exports = (req, res) => {
-    const {creationsTime, link, creator, status, timeForNextStep, company} = req.body;
+    const {creationsTime, link, creator, status, timeForNextStep, company, minBet} = req.body;
 
     Tender.findOne({'link': link}, async (err, tender) => {
         const {login, password, proxyIP, proxyLogin, proxyPassword} = await find(company);
@@ -25,6 +25,8 @@ module.exports = (req, res) => {
             newTender.isBotOn = false;
             newTender.isWork = false;
             newTender.allowToDelete = true;
+            newTender.panelBid = '';
+            newTender.minBet = minBet;
             newTender.logs = [];
 
             newTender.save(err => {

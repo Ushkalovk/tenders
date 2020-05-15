@@ -3,8 +3,10 @@
 const puppeteer = require('puppeteer');
 
 class Selenium {
-    constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company}) {
+    constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company, isBotOn, minBet}) {
         this.tender = require('../tenders/index');
+        this.bets = require('./algorithm');
+        this.bets.minBet = minBet;
         this.logs = require('../logs/index');
         this.currentIndex = currentMemberNumber;
         this.login = login;
@@ -13,12 +15,22 @@ class Selenium {
         this.proxyLogin = proxyLogin;
         this.proxyPassword = proxyPassword;
         this.link = link;
-        this.username = username;
-        this.usersBet = null;
         this.isBotOn = false;
         this.isStop = false;
         this.company = company;
         this.length = 0;
+        this.isBotOn = isBotOn;
+        this.currentRound = 0;
+
+        this.alert = {
+            open: false,
+            count: 0
+        };
+
+        this.bet = {
+            username: username,
+            value: null
+        };
 
         this.createPage(isParseName)
     }
@@ -43,6 +55,7 @@ class Selenium {
 
         if (!doc) {
             this.tender.sendMessageToClient({message: `Проверьте срок действия прокси компании ${this.company}`});
+
             await this.tender.disableTender({link: this.link});
             await this.stop(false);
         }
@@ -152,9 +165,10 @@ class Selenium {
             for (const [index, parent] of parents.entries()) {
                 const {color, participant, betText} = parent;
 
-                if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index) {
-                    console.log(`${this.currentIndex}: currentIndex`, `${index}: index`);
-                    await this.setLogs(participant, betText);
+                if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index && !this.alert.open) {
+                    this.currentRound = Math.floor(this.currentIndex / (this.length / 5));
+                    this.bets.setUser(participant, betText, this.currentRound);
+                    await this.setLogs(participant, betText, this.currentRound);
                 }
 
                 index === parents.length - 1 && this.search();
@@ -177,13 +191,14 @@ class Selenium {
                 participant,
                 bet,
                 currentMemberNumber: this.currentIndex++,
-                bitTime: new Date()
+                bitTime: new Date(),
+                round: this.currentRound
             }
         });
     }
 
     async findPanelBet() {
-        if (this.isStop) {
+        if (this.isStop || this.alert.count === 3) {
             return
         }
 
@@ -195,6 +210,9 @@ class Selenium {
         });
 
         this.parseMinBet(); // уведомляем, что панель открыта
+        this.alert.open = true;
+        this.alert.count++;
+        this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
 
         // ждём пока не закроется
 
@@ -203,33 +221,20 @@ class Selenium {
             hidden: true
         });
 
-        // уведомляем, что панель закрыта
-        this.usersBet && this.setLogs(this.isBotOn ? 'Бот' : this.username, `${this.usersBet} грн`);
-        this.closeFinedPanel();
+        this.setLogs(this.bet.username, `${this.bet.value} грн`);
+        this.closeFinedPanel(); // уведомляем, что панель закрыта
 
         this.findPanelBet();
     }
 
     closeFinedPanel() {
-        this.tender.sendMessageToClient({
+        this.alert.open = false;
+
+        this.logs.savePanelBid({
             bet: null,
             link: this.link,
-            isModalBets: true,
-            isOpen: false
         });
     }
-
-    // async makeABet() {
-    //     const color = await this.page.evaluate(() => {
-    //         const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
-    //         const input = panel.querySelector('#bid-amount-input');
-    //         input.focus();
-    //
-    //         return window.getComputedStyle(input).getPropertyValue('background-color');
-    //     });
-    //
-    //     color !== `rgb(238, 238, 238)` && this.parseMinBet()
-    // }
 
     async parseMinBet() {
         const bet = await this.page.evaluate(() => {
@@ -238,17 +243,52 @@ class Selenium {
             return panel.querySelector('.max_bid_amount.ng-binding.ng-scope').innerText;
         });
 
-        // const maxBetText = +maxBet.split(',')[0].split(' ').join('');
-
-        this.tender.sendMessageToClient({bet, link: this.link, isModalBets: true, isOpen: true});
+        this.logs.savePanelBid({
+            bet,
+            link: this.link,
+        });
     }
 
-    async enterBet(bet) {
-        this.usersBet = parseInt(bet);
+    toggleBot(isBotOn) {
+        this.isBotOn = isBotOn;
 
+        this.isBotOn && this.alert.open && this.makeABet();
+    }
+
+    async makeABet() {
+        const data = await this.page.evaluate(count => {
+            const blocks = document.querySelectorAll('.auction-round.past-round.ng-scope');
+            const rows = blocks[count].querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+
+            return {
+                participants: Array.from(rows).map(row => {
+                    const bet = row.querySelector('.label-price.ng-binding');
+
+                    bet.focus();
+                    const color = window.getComputedStyle(bet).getPropertyValue('color');
+
+                    if (color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') {
+                        return {
+                            participant: row.querySelector('.stage-info-item.stage-label.ng-scope').innerText,
+                            betText: bet.innerText
+                        }
+                    }
+                }),
+
+                rowsCount: rows.length
+            };
+        }, this.alert.count);
+
+        this.enterBet(this.bets.getBet(data, this.alert.count), 'Бот');
+    }
+
+    async enterBet(bet, username) {
         await this.page.click('#clear-bid-button');
-        await this.page.type('#bid-amount-input', bet);
+        await this.page.type('#bid-amount-input', `${bet}`);
         await this.page.click('#place-bid-button');
+
+        this.bet.value = `${bet}`;
+        this.bet.username = username;
     }
 
     async auth() {
@@ -258,36 +298,6 @@ class Selenium {
         await this.page.keyboard.press('Enter');
 
         this.moveToLot();
-    }
-
-    async reStart() {
-        await this.stop(false);
-
-        await this.tender.setNewTender.run({
-            link: this.link,
-            login: this.login,
-            password: this.password,
-            proxyIP: this.proxy,
-            proxyLogin: this.proxyLogin,
-            proxyPassword: this.proxyPassword,
-            email: this.username,
-            companyName: this.company
-        });
-    }
-
-    async switchToSecondWindow() {
-        try {
-            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
-            // await this.page.click('.btn.btn-success');
-
-            this.parseTime();
-            this.search();
-            this.findPanelBet();
-        } catch (e) {
-            this.parseTime();
-            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope span', {timeout: 1000 * 60 * 60 * 6});
-            this.reStart();
-        }
     }
 
     async moveToLot() {
@@ -331,20 +341,44 @@ class Selenium {
         }
     }
 
+    async switchToSecondWindow() {
+        try {
+            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            // await this.page.click('.btn.btn-success');
+
+            this.parseTime();
+            this.search();
+            this.findPanelBet();
+        } catch (e) {
+            this.parseTime();
+            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope span', {timeout: 1000 * 60 * 60 * 6});
+            this.reStart();
+        }
+    }
+
+    async reStart() {
+        await this.stop(false);
+
+        await this.tender.setNewTender.run({
+            link: this.link,
+            login: this.login,
+            password: this.password,
+            proxyIP: this.proxy,
+            proxyLogin: this.proxyLogin,
+            proxyPassword: this.proxyPassword,
+            email: this.bet.username,
+            companyName: this.company,
+            isBotOn: this.isBotOn,
+            minBet: this.bets.minBet
+        });
+    }
+
     async stop(allow = true) {
         this.isStop = true;
         this.closeFinedPanel();
         allow && this.tender.sendMessageToClient({isEnd: true, link: this.link});
 
         return await this.browser.close();
-    }
-
-    changeUsername(username) {
-        this.username = username;
-    }
-
-    toggleBot(isBotOn) {
-        this.isBotOn = isBotOn;
     }
 }
 

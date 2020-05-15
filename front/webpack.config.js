@@ -1,3 +1,1 @@
-const config = require('./webpack/config');
-
-module.exports = config;
+module.exports = require('./webpack/config');

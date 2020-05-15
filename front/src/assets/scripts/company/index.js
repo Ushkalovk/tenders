@@ -15,9 +15,7 @@ const updateField = (data) => {
 
   server.updateProxy(data)
     .then(resp => {
-      if (resp.status) {
-        setValue(name, text, proxyField)
-      }
+      resp.status && setValue(name, text, proxyField);
     });
 };
 
