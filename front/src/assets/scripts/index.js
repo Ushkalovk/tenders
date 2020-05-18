@@ -3,7 +3,6 @@ import '../styles/index.scss';
 import './masonry';
 import './popover';
 import './scrollbar';
-import './sidebar';
 import './utils';
 import './server';
 import './sockets';

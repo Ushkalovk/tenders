@@ -53,7 +53,7 @@ if (window.location.pathname === '/company.html') {
     const button = document.querySelector('#companyCreate button');
 
     const values = Array.from(inputs).reduce((acc, item) => {
-      return {...acc, [item.getAttribute('data-type')]: item.value}
+      return {...acc, [item.getAttribute('data-type')]: item.value.trim()}
     }, {});
 
     server.createCompany(values)
@@ -74,7 +74,7 @@ if (window.location.pathname === '/company.html') {
 
       updateField({
         name: e.target.closest('tr').getAttribute('data-name'),
-        text: e.target.value,
+        text: e.target.value.trim(),
         proxyField
       });
 

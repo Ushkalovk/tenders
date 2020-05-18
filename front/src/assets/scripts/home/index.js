@@ -129,12 +129,12 @@ if (window.location.pathname === '/index.html') {
     });
 
   document.getElementById('bot')
-    .addEventListener('click', () => {
-      this.setAttribute('disabled', 'true');
+    .addEventListener('click', e => {
+      e.target.setAttribute('disabled', 'true');
       server.toggleBot(template.activeLink)
         .then(response => {
           !response.status && createErrorMessage(response.message);
-          this.removeAttribute('disabled');
+          e.target.removeAttribute('disabled');
         });
     });
 

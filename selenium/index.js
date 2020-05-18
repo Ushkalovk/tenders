@@ -40,11 +40,11 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: false
+            headless: true
         });
 
         this.page = await this.browser.newPage();
-        // await this.page.setViewport({'width': 1920, 'height': 1080});
+        await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
         this.open(isParseName)
@@ -66,7 +66,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.switchToSecondWindow();
+            isParseName ? this.parseName() : this.auth();
         } catch (e) {
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
@@ -343,8 +343,8 @@ class Selenium {
 
     async switchToSecondWindow() {
         try {
-            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
-            // await this.page.click('.btn.btn-success');
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            await this.page.click('.btn.btn-success');
 
             this.parseTime();
             this.search();
