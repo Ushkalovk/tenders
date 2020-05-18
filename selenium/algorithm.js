@@ -1,7 +1,8 @@
 module.exports = {
-    myName: 'ООО Промэлектроника',
+    myName: ['Ви'],
     minBet: 0,
     bet: 0,
+    step: 0,
     roundsCount: 4,
     participants: {},
 
@@ -14,7 +15,9 @@ module.exports = {
             this.participants[round] = {};
         }
 
-        participant === this.myName ? this.bet = this.parse(betText) : this.participants[round][participant] = this.parse(betText);
+        const isMyName = this.myName.find(name => name.toLowerCase() === participant.toLowerCase());
+
+        isMyName ? this.bet = this.parse(betText) : this.participants[round][participant] = this.parse(betText);
     },
 
     getBet(data, round) {

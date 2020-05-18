@@ -40,7 +40,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: true
+            headless: false
         });
 
         this.page = await this.browser.newPage();
@@ -51,14 +51,9 @@ class Selenium {
     }
 
     async checkDocument() {
-        const doc = await this.page.evaluate(() => document.querySelector('body'));
+        const doc = await this.page.$('body');
 
-        if (!doc) {
-            this.tender.sendMessageToClient({message: `Проверьте срок действия прокси компании ${this.company}`});
-
-            await this.tender.disableTender({link: this.link});
-            await this.stop(false);
-        }
+        !doc && await this.stop({message: `Проверьте срок действия прокси компании ${this.company}`, disable: true});
     }
 
     async open(isParseName) {
@@ -66,35 +61,32 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.auth();
+            isParseName ? this.parseName() : this.switchToSecondWindow();
         } catch (e) {
+            let message = '';
+
             if (e.message.includes('invalid URL')) {
                 this.tender.removeTender.remove({link: this.link, message: `Некорректная ссылка: ${this.link}`});
             } else {
-                this.tender.sendMessageToClient({message: `Проверьте данные прокси следующей компании: ${this.company}`})
+                message = `Проверьте данные прокси следующей компании: ${this.company}`;
             }
 
-            await this.tender.disableTender({link: this.link});
-            await this.stop(false);
+            await this.stop({message, disable: true});
         }
     }
 
     async parseName() {
         try {
             await this.page.waitForSelector('.ivu-card-body [data-qa=title]', {timeout: 60000});
-
-            const text = await this.page.evaluate(() => {
-                return document.querySelector('.ivu-card-body [data-qa=title]').innerText;
-            });
+            const text = await this.page.$eval('.ivu-card-body [data-qa=title]', element => element.textContent);
 
             this.tender.setTenderName({tenderName: text, link: this.link});
-            await this.stop(false);
+            await this.stop({disable: false});
         } catch (e) {
-            e.name === 'TimeoutError' && this.tender.sendMessageToClient({
-                message: `Не получилось найти имя тендера со следующей ссылкой: ${this.link}`
+            e.name === 'TimeoutError' && await this.stop({
+                message: `Не получилось найти имя тендера со следующей ссылкой: ${this.link}`,
+                disable: false
             })
-        } finally {
-            await this.stop(false);
         }
     }
 
@@ -103,20 +95,17 @@ class Selenium {
             return
         }
 
-        try {
-            const currentTime = await this.page.evaluate(() => {
-                const text = document.querySelector('timer.ng-scope.ng-isolate-scope');
+        const timer = await this.page.$('timer.ng-scope.ng-isolate-scope');
 
-                return text ? text.innerText : false;
-            });
+        if (timer) {
+            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.textContent);
 
-            currentTime && currentTime !== time && this.tender.setTimeForNextStep({
+            currentTime !== time && this.tender.setTimeForNextStep({
                 timer: currentTime,
                 link: this.link
             });
+
             this.parseTime(currentTime);
-        } catch (e) {
-            console.log('упс')
         }
     }
 
@@ -148,14 +137,7 @@ class Selenium {
             });
 
             if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
-                await this.stop(true);
-
-                return
-            }
-
-            if (!parents.length) {
-                console.log(parents.length, 'text array length');
-                this.search();
+                await this.stop({disable: true});
 
                 return
             }
@@ -176,9 +158,7 @@ class Selenium {
         } catch (e) {
             console.log(e.message)
             // if (e.message.includes('Target closed')) {
-            this.tender.sendMessageToClient({message: `Тендер со следующей ссылкой: ${this.link} закрыт`});
-            await this.tender.disableTender({link: this.link});
-            await this.stop(false);
+            await this.stop({message: `Тендер со следующей ссылкой: ${this.link} закрыт`, disable: true});
             // }
         }
     }
@@ -237,14 +217,14 @@ class Selenium {
     }
 
     async parseMinBet() {
-        const bet = await this.page.evaluate(() => {
-            const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
-
-            return panel.querySelector('.max_bid_amount.ng-binding.ng-scope').innerText;
-        });
+        // const bet = await this.page.evaluate(() => {
+        //     const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
+        //
+        //     return panel.querySelector('.max_bid_amount.ng-binding.ng-scope').innerText;
+        // });
 
         this.logs.savePanelBid({
-            bet,
+            bet: await this.page.$eval('.max_bid_amount.ng-binding.ng-scope', element => element.textContent),
             link: this.link,
         });
     }
@@ -256,9 +236,9 @@ class Selenium {
     }
 
     async makeABet() {
-        const data = await this.page.evaluate(count => {
-            const blocks = document.querySelectorAll('.auction-round.past-round.ng-scope');
-            const rows = blocks[count].querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+        const data = await this.page.evaluate(() => {
+            const currentRound = document.querySelector('.auction-round.ng-scope.current-round');
+            const rows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
 
             return {
                 participants: Array.from(rows).map(row => {
@@ -277,7 +257,7 @@ class Selenium {
 
                 rowsCount: rows.length
             };
-        }, this.alert.count);
+        });
 
         this.enterBet(this.bets.getBet(data, this.alert.count), 'Бот');
     }
@@ -297,54 +277,115 @@ class Selenium {
         await this.page.type('[type=password]', this.password);
         await this.page.keyboard.press('Enter');
 
-        this.moveToLot();
+        await this.page.waitForNavigation();
+
+        const isSecondLayout = await this.page.$('.navbar.navbar-default');
+
+        isSecondLayout ? this.secondLayout() : this.firstLayout();
     }
 
-    async moveToLot() {
+    async firstLayout() {
         const currentURL = await this.page.url();
 
-        this.browser.on('targetcreated', async (target) => {
-            if (target.type() === 'page') {
-                console.log('new Page');
-                const page = await target.page();
-                const url = page.url();
-
-                if (url !== currentURL) {
-                    await this.page.close();
-                    this.page = page;
-                    this.switchToSecondWindow();
-                }
-            }
-        });
-
-        const spanClick = async () => {
-            try {
-                await this.page.click('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
-                await spanClick();
-            } catch (e) {
-                console.log(e.message, 'fail')
-            }
-        };
-
-        await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
-        await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
-
+        // await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
+        // await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
 
         try {
             await this.page.waitForSelector('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
 
-            this.tender.sendMessageToClient({message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`});
-            await this.tender.disableTender({link: this.link});
-            await this.stop(false);
+            await this.stop({
+                message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`,
+                disable: true
+            })
         } catch (e) {
+            const spanClick = async () => {
+                const elem = await this.page.$('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
+
+                elem ? await elem.click() : await spanClick();
+            };
+
+            this.browser.once('targetcreated', async (target) => {
+                if (target.type() === 'page') {
+                    console.log('new Page');
+                    const page = await target.page();
+                    const url = page.url();
+
+                    if (url !== currentURL) {
+                        await this.page.close();
+                        this.page = page;
+                        this.switchToSecondWindow();
+                    }
+                }
+            });
+
             await spanClick();
         }
     }
 
+    async secondLayout() {
+        const getIframe = (resolve) => {
+            this.page.once('frameattached', async () => {
+                let isFind = false;
+
+                for (const frame of this.page.frames()) {
+                    try {
+                        const parseText = await frame.$eval('div.price.text-lot', element => element.textContent);
+                        this.parseMinStep(parseText);
+
+                        isFind = true;
+                        resolve(frame);
+                    } catch (e) {
+                    }
+                }
+
+                !isFind && getIframe(resolve);
+            });
+        };
+
+        const getFrame = () => new Promise(resolve => getIframe(resolve));
+
+        const frame = await getFrame();
+
+        // await frame.click('button.show-control.button-lot.yellow');
+
+        // try {
+        //     await this.page.waitForSelector('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
+        //
+        //     this.tender.sendMessageToClient({message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`});
+        //     await this.tender.disableTender({link: this.link});
+        //     await this.stop();
+        // } catch (e) {
+        //     const currentURL = await this.page.url();
+        //
+        //     this.browser.once('targetcreated', async (target) => {
+        //         if (target.type() === 'page') {
+        //             console.log('new Page');
+        //             const page = await target.page();
+        //             const url = page.url();
+        //
+        //             if (url !== currentURL) {
+        //                 await this.page.close();
+        //                 this.page = page;
+        //                 this.switchToSecondWindow();
+        //             }
+        //         }
+        //     });
+        //
+        //     await frame.waitForSelector('a.link-button', {timeout: 20000});
+        //     await frame.page.click('a.link-button');
+        // }
+    }
+
+    parseMinStep(text) {
+        const spaceIndex = text.split('').findIndex(item => item === '%');
+
+        this.bets.step = +text.slice(0, spaceIndex);
+    }
+
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
-            await this.page.click('.btn.btn-success');
+            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            // await this.page.click('.btn.btn-success');
 
             this.parseTime();
             this.search();
@@ -357,7 +398,7 @@ class Selenium {
     }
 
     async reStart() {
-        await this.stop(false);
+        await this.stop({disable: false});
 
         await this.tender.setNewTender.run({
             link: this.link,
@@ -373,10 +414,12 @@ class Selenium {
         });
     }
 
-    async stop(allow = true) {
+    async stop({message, disable = true}) {
         this.isStop = true;
         this.closeFinedPanel();
-        allow && this.tender.sendMessageToClient({isEnd: true, link: this.link});
+
+        disable && await this.tender.disableTender({link: this.link});
+        message && this.tender.sendMessageToClient({message});
 
         return await this.browser.close();
     }
