@@ -43,26 +43,25 @@ module.exports = {
         const betBelowOurs = Object.values(this.participants).filter(bet => bet < this.bet && bet > this.minBet);
         const filterBets = [...bets.filter(bet => bet > this.minBet), ...betBelowOurs];
 
+        if (isEvery && bets.length + 1 === rowsCount) {
+            return this.bet;
+        }
+
         if (round < 3) {
-            if (isEvery && bets.length + 1 === rowsCount) {
-                return this.bet;
-            }
-
-            if (!bets.length) {
-                return this.bet - this.getDifference(this.bet, round);
-            }
-
-            if (bets.length && bets.length + 1 !== rowsCount && betBelowOurs.length) {
+            if ((bets.length && bets.length + 1 !== rowsCount && betBelowOurs.length) || !bets.length) {
                 const minBet = this.getMinBet(filterBets);
+                const myBet = minBet - this.getDifference(minBet, round);
 
-                return minBet - this.getDifference(minBet, round);
+                return myBet > this.minBet ? myBet : this.minBet;
             }
 
             if (bets.length && (bets.length + 1 === rowsCount || !betBelowOurs.length)) {
-                return this.getMinBet(filterBets) - 10;
+                const myBet = this.getMinBet(filterBets) - this.bet * (this.step / 100);
+                // если конкуренты поставили стаки, а наша оказалась всё ещё ниже - оставляем ту же
+                return  myBet > this.minBet ? myBet : this.minBet;
             }
         } else {
-            return betBelowOurs.length ? this.minBet : this.getMinBet(filterBets) - 50;
+            return betBelowOurs.length ? this.minBet : this.getMinBet(filterBets) - this.bet * (this.step / 100);
         }
     }
 };

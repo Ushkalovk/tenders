@@ -61,7 +61,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.switchToSecondWindow();
+            isParseName ? this.parseName() : this.auth();
         } catch (e) {
             let message = '';
 
@@ -95,10 +95,9 @@ class Selenium {
             return
         }
 
-        const timer = await this.page.$('timer.ng-scope.ng-isolate-scope');
-
-        if (timer) {
-            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.textContent);
+        try {
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 5000});
+            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
 
             currentTime !== time && this.tender.setTimeForNextStep({
                 timer: currentTime,
@@ -106,6 +105,8 @@ class Selenium {
             });
 
             this.parseTime(currentTime);
+        } catch (e) {
+            console.log('упс')
         }
     }
 
@@ -201,7 +202,7 @@ class Selenium {
             hidden: true
         });
 
-        this.setLogs(this.bet.username, `${this.bet.value} грн`);
+        await this.setLogs(this.bet.username, `${this.bet.value} грн`);
         this.closeFinedPanel(); // уведомляем, что панель закрыта
 
         this.findPanelBet();
@@ -217,14 +218,8 @@ class Selenium {
     }
 
     async parseMinBet() {
-        // const bet = await this.page.evaluate(() => {
-        //     const panel = document.querySelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price');
-        //
-        //     return panel.querySelector('.max_bid_amount.ng-binding.ng-scope').innerText;
-        // });
-
         this.logs.savePanelBid({
-            bet: await this.page.$eval('.max_bid_amount.ng-binding.ng-scope', element => element.textContent),
+            bet: await this.page.$eval('.max_bid_amount.ng-binding.ng-scope', element => element.innerText),
             link: this.link,
         });
     }
@@ -287,39 +282,54 @@ class Selenium {
     async firstLayout() {
         const currentURL = await this.page.url();
 
-        // await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
-        // await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
+        this.browser.once('targetcreated', async (target) => {
+            if (target.type() === 'page') {
+                console.log('new Page');
+                const page = await target.page();
+                const url = page.url();
 
-        try {
-            await this.page.waitForSelector('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
-
-            await this.stop({
-                message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`,
-                disable: true
-            })
-        } catch (e) {
-            const spanClick = async () => {
-                const elem = await this.page.$('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
-
-                elem ? await elem.click() : await spanClick();
-            };
-
-            this.browser.once('targetcreated', async (target) => {
-                if (target.type() === 'page') {
-                    console.log('new Page');
-                    const page = await target.page();
-                    const url = page.url();
-
-                    if (url !== currentURL) {
-                        await this.page.close();
-                        this.page = page;
-                        this.switchToSecondWindow();
-                    }
+                if (url !== currentURL) {
+                    await this.page.close();
+                    this.page = page;
+                    this.switchToSecondWindow();
                 }
-            });
+            }
+        });
 
-            await spanClick();
-        }
+        await this.page.waitForSelector('[data-qa=budget-min-step] div:last-child', {visible: true});
+        const parseText = await this.page.$eval('[data-qa=budget-min-step] div:last-child', element => element.textContent);
+        this.parseMinStep(parseText);
+
+        await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
+        await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
+
+        await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span', {timeout: 5000});
+
+        const spanClick = async () => {
+            const span = await this.page.$('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
+
+            if (span) {
+                try {
+                    const notice = await this.page.$('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
+
+                    if (notice) {
+                        await this.stop({
+                            message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`,
+                            disable: true
+                        });
+
+                        return;
+                    }
+
+                    await span.click();
+                    await spanClick();
+                } catch (e) {
+                    console.log('span click')
+                }
+            }
+        };
+
+        await spanClick();
     }
 
     async secondLayout() {
@@ -380,12 +390,13 @@ class Selenium {
         const spaceIndex = text.split('').findIndex(item => item === '%');
 
         this.bets.step = +text.slice(0, spaceIndex);
+        console.log(this.bets.step, 'bet step')
     }
 
     async switchToSecondWindow() {
         try {
-            // await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
-            // await this.page.click('.btn.btn-success');
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            await this.page.click('.btn.btn-success');
 
             this.parseTime();
             this.search();

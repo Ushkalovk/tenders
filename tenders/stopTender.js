@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
 
     if (tender.creator === email || role === 'admin') {
         try {
-            await activeTenders[link].stop();
+            await activeTenders[link].stop({});
             disableTender({link});
 
             await res.json({status: true})

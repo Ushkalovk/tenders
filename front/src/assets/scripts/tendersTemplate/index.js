@@ -140,17 +140,10 @@ class Template {
         item: data.logs,
         numberOfParticipants: data.numberOfParticipants,
       });
-    } else if (data.isEnd) {
-      Array.from(this.findPrimaryButtons())
-        .forEach(btn => {
-          if (btn.getAttribute('data-link') === data.link) btn.textContent = 'Старт';
-        });
     } else if (data.deleteTender) {
       this.deleteRow(data.link);
     } else if (data.tenderName) {
-      const cell = this.findRowByLink(data.link).children[1];
-
-      this.refreshCellText({cell, text: data.tenderName});
+      this.refreshCellText({cell: this.findRowByLink(data.link).children[1], text: data.tenderName});
     } else if (data.timer) {
       this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: data.timer});
 
