@@ -1,12 +1,12 @@
 "use strict";
 
 const puppeteer = require('puppeteer');
+const Algorithm = require('./algorithm');
 
 class Selenium {
     constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company, isBotOn, minBet}) {
         this.tender = require('../tenders/index');
-        this.bets = require('./algorithm');
-        this.bets.minBet = minBet;
+        this.algorithm = new Algorithm(minBet);
         this.logs = require('../logs/index');
         this.currentIndex = currentMemberNumber;
         this.login = login;
@@ -41,7 +41,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: true
+            headless: false
         });
 
         this.page = await this.browser.newPage();
@@ -62,7 +62,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.auth();
+            isParseName ? this.parseName() : this.switchToSecondWindow();
         } catch (e) {
             let message = '';
 
@@ -151,7 +151,7 @@ class Selenium {
 
                 if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index && this.allowParse) {
                     this.currentRound = Math.floor(this.currentIndex / (this.length / 5));
-                    this.bets.setUser(participant, betText, this.currentRound);
+                    this.algorithm.setUser(participant, betText, this.currentRound);
                     await this.setLogs(participant, betText, this.currentRound);
                 }
 
@@ -259,7 +259,7 @@ class Selenium {
             });
         });
 
-        this.enterBet(this.bets.getBet(participants, this.alert.count), 'Бот');
+        this.enterBet(this.algorithm.getBet(participants, this.alert.count), 'Бот');
     }
 
     async enterBet(bet, username) {
@@ -396,9 +396,11 @@ class Selenium {
     parseMinStep(percent, budget) {
         const spaceIndex = percent.split('').findIndex(item => item === '%');
         const budgetParse = parseInt(budget.split(' ').join(''));
+        const step = +(budgetParse * (+percent.slice(0, spaceIndex) / 100)).toFixed(1);
 
-        this.bets.step = budgetParse * (+percent.slice(0, spaceIndex) / 100);
-        console.log(this.bets.step, 'bet step')
+        this.algorithm.setStep(step);
+
+        console.log(step, 'bet step')
     }
 
     async switchToSecondWindow() {
@@ -429,7 +431,7 @@ class Selenium {
             email: this.bet.username,
             companyName: this.company,
             isBotOn: this.isBotOn,
-            minBet: this.bets.minBet
+            minBet: this.algorithm.minBet
         });
     }
 
