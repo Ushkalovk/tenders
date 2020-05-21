@@ -21,6 +21,7 @@ class Selenium {
         this.length = 0;
         this.isBotOn = isBotOn;
         this.currentRound = 0;
+        this.allowParse = true;
 
         this.alert = {
             open: false,
@@ -40,7 +41,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: false
+            headless: true
         });
 
         this.page = await this.browser.newPage();
@@ -148,7 +149,7 @@ class Selenium {
             for (const [index, parent] of parents.entries()) {
                 const {color, participant, betText} = parent;
 
-                if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index && !this.alert.open) {
+                if ((color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') && this.currentIndex <= index && this.allowParse) {
                     this.currentRound = Math.floor(this.currentIndex / (this.length / 5));
                     this.bets.setUser(participant, betText, this.currentRound);
                     await this.setLogs(participant, betText, this.currentRound);
@@ -183,29 +184,37 @@ class Selenium {
             return
         }
 
-        // ждём, пока панель не появится
+        try {
+            // ждём, пока панель не появится
 
-        await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
-            timeout: 1000 * 60 * 20,
-            visible: true
-        });
+            await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
+                timeout: 1000 * 60 * 40,
+                visible: true
+            });
 
-        this.parseMinBet(); // уведомляем, что панель открыта
-        this.alert.open = true;
-        this.alert.count++;
-        this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
+            this.parseMinBet(); // уведомляем, что панель открыта
+            this.alert.open = true;
+            this.alert.count++;
+            this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
 
-        // ждём пока не закроется
+            await this.page.waitFor(10000); // дать время на парсинг ставки соперника перед панелью
+            this.allowParse = false;
 
-        await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
-            timeout: 1000 * 60 * 20,
-            hidden: true
-        });
+            // ждём пока не закроется
 
-        await this.setLogs(this.bet.username, `${this.bet.value} грн`);
-        this.closeFinedPanel(); // уведомляем, что панель закрыта
+            await this.page.waitForSelector('.panel.panel-default.bg-warning.fixed-bottom.auction-with-one-price', {
+                timeout: 1000 * 60 * 20,
+                hidden: true
+            });
 
-        this.findPanelBet();
+            await this.setLogs(this.bet.username, `${this.bet.value} грн`);
+            this.closeFinedPanel(); // уведомляем, что панель закрыта
+            this.allowParse = true;
+
+            this.findPanelBet();
+        } catch (e) {
+            console.log("can't find panel")
+        }
     }
 
     closeFinedPanel() {
@@ -231,30 +240,26 @@ class Selenium {
     }
 
     async makeABet() {
-        const data = await this.page.evaluate(() => {
+        const participants = await this.page.evaluate(() => {
             const currentRound = document.querySelector('.auction-round.ng-scope.current-round');
             const rows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
 
-            return {
-                participants: Array.from(rows).map(row => {
-                    const bet = row.querySelector('.label-price.ng-binding');
+            return Array.from(rows).map(row => {
+                const bet = row.querySelector('.label-price.ng-binding');
 
-                    bet.focus();
-                    const color = window.getComputedStyle(bet).getPropertyValue('color');
+                bet.focus();
+                const color = window.getComputedStyle(bet).getPropertyValue('color');
 
-                    if (color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') {
-                        return {
-                            participant: row.querySelector('.stage-info-item.stage-label.ng-scope').innerText,
-                            betText: bet.innerText
-                        }
+                if (color === `rgba(51, 51, 51, 1)` || color === 'rgb(51, 51, 51)') {
+                    return {
+                        participant: row.querySelector('.stage-info-item.stage-label.ng-scope').innerText,
+                        betText: bet.innerText
                     }
-                }),
-
-                rowsCount: rows.length
-            };
+                }
+            });
         });
 
-        this.enterBet(this.bets.getBet(data, this.alert.count), 'Бот');
+        this.enterBet(this.bets.getBet(participants, this.alert.count), 'Бот');
     }
 
     async enterBet(bet, username) {
@@ -297,8 +302,10 @@ class Selenium {
         });
 
         await this.page.waitForSelector('[data-qa=budget-min-step] div:last-child', {visible: true});
-        const parseText = await this.page.$eval('[data-qa=budget-min-step] div:last-child', element => element.textContent);
-        this.parseMinStep(parseText);
+        const parsePercent = await this.page.$eval('[data-qa=budget-min-step] div:last-child', element => element.textContent);
+        const budget = await this.page.$eval('[data-qa=budget-amount]', element => element.innerText);
+
+        this.parseMinStep(parsePercent, budget);
 
         await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
         await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
@@ -386,16 +393,17 @@ class Selenium {
         // }
     }
 
-    parseMinStep(text) {
-        const spaceIndex = text.split('').findIndex(item => item === '%');
+    parseMinStep(percent, budget) {
+        const spaceIndex = percent.split('').findIndex(item => item === '%');
+        const budgetParse = parseInt(budget.split(' ').join(''));
 
-        this.bets.step = +text.slice(0, spaceIndex);
+        this.bets.step = budgetParse * (+percent.slice(0, spaceIndex) / 100);
         console.log(this.bets.step, 'bet step')
     }
 
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 10000});
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 20000});
             await this.page.click('.btn.btn-success');
 
             this.parseTime();

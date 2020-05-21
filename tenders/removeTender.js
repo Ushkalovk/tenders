@@ -25,7 +25,7 @@ module.exports = {
         }
 
         if (tender.isWork && role === 'admin' && activeTenders[link]) {
-            await activeTenders[link].stop();
+            await activeTenders[link].stop({});
         }
 
         if (tender && (tender.creator === email || role === 'admin')) {

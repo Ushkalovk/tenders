@@ -34,34 +34,35 @@ module.exports = {
         return Math.min(...bets);
     },
 
-    comparison(data, round) {
-        const {participants, rowsCount} = data;
+    comparison(participants, round) {
         const filterParticipants = participants.filter(i => i);
 
-        const isEvery = filterParticipants.every(item => this.participants[round - 1][item.participant] === this.parse(item.betText));
+        const isEveryUnderOurs = filterParticipants.every(item => this.parse(item.betText) > this.bet);
         const bets = Array.from(filterParticipants, item => this.parse(item.betText));
-        const betBelowOurs = Object.values(this.participants).filter(bet => bet < this.bet && bet > this.minBet);
+        const betBelowOurs = Object.values(this.participants[round - 1]).filter(bet => bet < this.bet && bet > this.minBet);
         const filterBets = [...bets.filter(bet => bet > this.minBet), ...betBelowOurs];
 
-        if (isEvery && bets.length + 1 === rowsCount) {
+        if (!betBelowOurs.length && isEveryUnderOurs) {
             return this.bet;
         }
 
         if (round < 3) {
-            if ((bets.length && bets.length + 1 !== rowsCount && betBelowOurs.length) || !bets.length) {
+            if ((bets.length && bets.length + 1 !== participants.length && betBelowOurs.length) || !bets.length) {
+                console.log(betBelowOurs, bets);
                 const minBet = this.getMinBet(filterBets);
                 const myBet = minBet - this.getDifference(minBet, round);
 
                 return myBet > this.minBet ? myBet : this.minBet;
             }
 
-            if (bets.length && (bets.length + 1 === rowsCount || !betBelowOurs.length)) {
-                const myBet = this.getMinBet(filterBets) - this.bet * (this.step / 100);
+            if (bets.length && (bets.length + 1 === participants.length || !betBelowOurs.length)) {
+                console.log(betBelowOurs, bets);
+                const myBet = this.getMinBet(filterBets) - this.step;
                 // если конкуренты поставили стаки, а наша оказалась всё ещё ниже - оставляем ту же
                 return  myBet > this.minBet ? myBet : this.minBet;
             }
         } else {
-            return betBelowOurs.length ? this.minBet : this.getMinBet(filterBets) - this.bet * (this.step / 100);
+            return betBelowOurs.length ? this.minBet : this.getMinBet(filterBets) - this.step;
         }
     }
 };
