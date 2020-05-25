@@ -5,7 +5,11 @@ import 'datatables';
 class Template {
   constructor() {
     this.table = $('#dataTable')
-      .DataTable();
+      .DataTable({
+        'pageLength': 100,
+        'lengthMenu': [[50, 100, 200, -1], [50, 100, 200, 'All']],
+      });
+
     this.tableLogs = document.querySelector('#tableLogs tbody');
     this.activeLink = null;
 

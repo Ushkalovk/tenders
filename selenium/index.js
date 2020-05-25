@@ -207,7 +207,7 @@ class Selenium {
                 hidden: true
             });
 
-            await this.setLogs(this.bet.username, `${this.bet.value} грн`);
+            await this.setLogs(this.bet.username, `${this.bet.value ? this.bet.value : this.algorithm.bet} грн`);
             this.closeFinedPanel(); // уведомляем, что панель закрыта
             this.allowParse = true;
 
