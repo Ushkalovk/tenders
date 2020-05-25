@@ -18,7 +18,7 @@ module.exports = {
             return;
         }
 
-        if ((!tender.allowToDelete || role !== 'admin') && res) {
+        if (!tender.allowToDelete && role !== 'admin') {
             await res.json({status: false, message: 'После старта тендера удалить его может только админ'});
 
             return
