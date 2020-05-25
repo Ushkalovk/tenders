@@ -9,7 +9,6 @@ class Template {
         'pageLength': 100,
         'lengthMenu': [[50, 100, 200, -1], [50, 100, 200, 'All']],
       });
-
     this.tableLogs = document.querySelector('#tableLogs tbody');
     this.activeLink = null;
 
@@ -92,21 +91,20 @@ class Template {
         });
 
         server.getTenders()
-          .then(rows => rows.forEach(i => this.addRow(i)));
+          .then(rows => rows.forEach((i, index) => this.addRow(i, index + 1)));
       });
   }
 
-  addRow(dataTender) {
+  addRow(dataTender, index) {
     const {creationsTime, name, link, creator, status, timeForNextStep, isWork, company, minBet} = dataTender;
-    const shortLink = link.length > 15 ?
-      `${link.split('')
-        .splice(0, 15)
-        .join('')}...` : link;
-
-    this.table.row.add([
+    // const shortLink = link.length > 15 ?
+    //   `${link.split('')
+    //     .splice(0, 15)
+    //     .join('')}...` : link;
+    const row = this.table.row.add([
+      index,
       creationsTime,
-      name,
-      `<a href=${link} target="_blank">${shortLink}</a>`,
+      `<a href=${link} target="_blank">${name}</a>`,
       creator,
       '<select data-type="company"></select>',
       `${minBet} грн`,
@@ -117,7 +115,10 @@ class Template {
       `<button class='btn cur-p btn-success' data-toggle='modal' data-target='#modalLogs' data-link="${dataTender.link}">Смотреть</button>`,
       `<button class='btn cur-p btn-info' data-link="${dataTender.link}">Перейти</button>`,
     ])
-      .draw();
+      .draw()
+      .node();
+
+    row.setAttribute('data-link', dataTender.link);
 
     this.createSelect(link, company);
   }
@@ -147,7 +148,10 @@ class Template {
     } else if (data.deleteTender) {
       this.deleteRow(data.link);
     } else if (data.tenderName) {
-      this.refreshCellText({cell: this.findRowByLink(data.link).children[1], text: data.tenderName});
+      this.refreshCellText({
+        cell: this.findRowByLink(data.link).children[2],
+        text: `<a href=${data.link} target="_blank">${data.tenderName}</a>`,
+      });
     } else if (data.timer) {
       this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: data.timer});
 
@@ -155,7 +159,7 @@ class Template {
         document.getElementById('timer').textContent = data.timer;
       }
     } else if (data.newTender) {
-      this.addRow(data);
+      this.addRow(data, ++this.table.rows().data().length);
     } else if (data.toggleTender) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[8],
@@ -229,14 +233,7 @@ class Template {
   }
 
   findRowByLink(link) {
-    return Array.from(this.findPrimaryButtons())
-      .find(btn => btn.getAttribute('data-link') === link)
-      .closest('tr');
-  }
-
-  findPrimaryButtons() {
-    return document.getElementById('dataTable')
-      .querySelectorAll('.btn-primary');
+    return this.table.row(`[data-link="${link}"]`).node();
   }
 
   refreshCellText({cell, text}) {
