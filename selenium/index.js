@@ -41,7 +41,7 @@ class Selenium {
 
         this.browser = await puppeteer.launch({
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
-            headless: false
+            headless: true
         });
 
         this.page = await this.browser.newPage();
@@ -62,7 +62,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.switchToSecondWindow();
+            isParseName ? this.parseName() : this.auth();
         } catch (e) {
             let message = '';
 
@@ -262,10 +262,14 @@ class Selenium {
         this.enterBet(this.algorithm.getBet(participants, this.alert.count), 'Бот');
     }
 
-    async enterBet(bet, username) {
-        await this.page.click('#clear-bid-button');
-        await this.page.type('#bid-amount-input', `${bet}`);
-        await this.page.click('#place-bid-button');
+    async enterBet(bets, username) {
+        const {bet, allow} = bets;
+
+        if (allow) {
+            await this.page.click('#clear-bid-button');
+            await this.page.type('#bid-amount-input', `${bet}`);
+            await this.page.click('#place-bid-button');
+        }
 
         this.bet.value = `${bet}`;
         this.bet.username = username;
@@ -277,11 +281,14 @@ class Selenium {
         await this.page.type('[type=password]', this.password);
         await this.page.keyboard.press('Enter');
 
-        await this.page.waitForNavigation();
+        try {
+            await this.page.waitForNavigation();
+            const isSecondLayout = await this.page.$('.navbar.navbar-default');
 
-        const isSecondLayout = await this.page.$('.navbar.navbar-default');
-
-        isSecondLayout ? this.secondLayout() : this.firstLayout();
+            isSecondLayout ? this.secondLayout() : this.firstLayout();
+        } catch (e) {
+            this.firstLayout();
+        }
     }
 
     async firstLayout() {
@@ -405,7 +412,7 @@ class Selenium {
 
     async switchToSecondWindow() {
         try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 20000});
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 30000});
             await this.page.click('.btn.btn-success');
 
             this.parseTime();

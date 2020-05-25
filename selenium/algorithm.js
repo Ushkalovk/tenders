@@ -1,6 +1,6 @@
 class Algorithm {
     constructor(minBet) {
-        this.myName = ['ООО Промэлектроника'];
+        this.myName = ['Ви'];
         this.roundsCount = 4;
         this.minBet = minBet;
         this.bet = 0;
@@ -27,9 +27,10 @@ class Algorithm {
     }
 
     getBet(data, round) {
-        this.bet = this.comparison(data, round);
+        const bets = this.comparison(data, round);
+        this.bet = bets.bet;
 
-        return this.bet;
+        return bets;
     }
 
     getDifference(enemyMinBet, round) {
@@ -50,7 +51,12 @@ class Algorithm {
 
         if (!betBelowOurs.length && isEveryUnderOurs) {
             console.log(betBelowOurs, isEveryUnderOurs, filterParticipants, '3')
-            return this.bet;
+
+            return {bet: this.bet, allow: false};
+        }
+
+        if (!filterBets.length) {
+            return {bet: this.minBet, allow: true};
         }
 
         if (round < 3) {
@@ -58,18 +64,25 @@ class Algorithm {
                 console.log(filterBets, betBelowOurs, bets, '1');
                 const minBet = this.getMinBet(filterBets);
                 const myBet = minBet - this.getDifference(minBet, round);
+                console.log(myBet, 'myBet')
 
-                return myBet > this.minBet ? myBet : this.minBet;
+                return myBet > this.minBet ? {bet: myBet, allow: true} : {bet: this.minBet, allow: true};
             }
 
             if (bets.length && (bets.length + 1 === participants.length || !betBelowOurs.length)) {
                 console.log(filterBets, betBelowOurs, bets, '2');
                 const myBet = this.getMinBet(filterBets) - this.step;
+                console.log(myBet, 'myBet')
                 // если конкуренты поставили стаки, а наша оказалась всё ещё ниже - оставляем ту же
-                return myBet > this.minBet ? myBet : this.minBet;
+                return myBet > this.minBet ? {bet: myBet, allow: true} : {bet: this.minBet, allow: true};
             }
         } else {
-            return betBelowOurs.length ? this.minBet : this.getMinBet(filterBets) - this.step;
+            return betBelowOurs.length ?
+                {bet: this.minBet, allow: true} :
+                {
+                    bet: this.getMinBet(filterBets) - this.step,
+                    allow: true
+                };
         }
     }
 }
