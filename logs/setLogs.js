@@ -15,7 +15,7 @@ module.exports = (object, blockLength) => {
             }, {new: true}, (err, tender) => {
                 if (err) return console.log(err);
 
-                sendMessageToClient({...object, status: tender.status, blockLength});
+                tender && sendMessageToClient({...object, status: tender.status, blockLength});
                 resolve();
             })
     })
