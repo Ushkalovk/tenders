@@ -62,7 +62,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            await this.auth();
+            await this.parseName();
         } catch (e) {
             let message = '';
 
