@@ -62,7 +62,6 @@ class Template {
   }
 
   createTender(link, company, minBet) {
-    console.log(link, company)
     const dataTender = {
       creationsTime: this.transformTime(new Date()),
       name: '',
@@ -121,6 +120,10 @@ class Template {
     row.setAttribute('data-link', dataTender.link);
   }
 
+  updateRowsNumber() {
+    Array.from(this.table.rows().nodes(), (row, index) => row.children[0].textContent = index + 1);
+  }
+
   dispatch(data) {
     if (this.activeLink === data.link && data.logs) {
       this.displayTextAboutBets({
@@ -129,6 +132,7 @@ class Template {
       });
     } else if (data.deleteTender) {
       this.deleteRow(data.link);
+      this.updateRowsNumber();
     } else if (data.tenderName) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[2],
