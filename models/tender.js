@@ -13,6 +13,7 @@ module.exports = mongoose.model('Tender', {
     isWork: Boolean,
     allowToDelete: Boolean,
     panelBid: String,
+    botSuggest: String,
     minBet: Number,
     logs: [
         {

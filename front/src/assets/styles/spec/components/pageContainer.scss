@@ -149,12 +149,19 @@ table.dataTable thead th:nth-last-child(4) {
 
 .yourSuggestion {
   display: flex;
+  flex-direction: column;
   font-size: 16px;
   margin-bottom: 15px;
 }
 
+.yourSuggestion .yourBet,
+.yourSuggestion .botBet {
+  display: flex;
+}
+
 .yourSuggestion .text {
   font-weight: bold;
+  margin-right: 20px;
 }
 
 .wrapper .systems form {

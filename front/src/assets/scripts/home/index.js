@@ -75,7 +75,9 @@ if (window.location.pathname === '/index.html') {
             .then(response => {
               target.removeAttribute('disabled');
 
-              response.status && template.showBets(response.object, link, response.isBotOn, response.timer, response.panelBid);
+              response.status && template.showBets(
+                response.object, link, response.isBotOn, response.timer, response.panelBid, response.botSuggest
+              );
             });
         }
       }

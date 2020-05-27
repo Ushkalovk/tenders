@@ -62,7 +62,7 @@ class Selenium {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            await this.parseName();
+            await this.auth();
         } catch (e) {
             let message = '';
 
@@ -120,6 +120,10 @@ class Selenium {
 
             if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
                 await this.stop({disable: true});
+                this.tender.setTimeForNextStep({
+                    timer: 'Закончен',
+                    link: this.link,
+                });
 
                 return
             }
@@ -204,6 +208,11 @@ class Selenium {
             bet: null,
             link: this.link,
         });
+
+        this.logs.saveBotSuggest({
+            botSuggest: '',
+            link: this.link,
+        });
     }
 
     async parseMinBet() {
@@ -249,6 +258,16 @@ class Selenium {
             await this.page.click('#clear-bid-button');
             await this.page.type('#bid-amount-input', `${bet}`);
             await this.page.click('#place-bid-button');
+
+            this.logs.saveBotSuggest({
+                botSuggest: `${bet}`,
+                link: this.link,
+            });
+        } else {
+            this.logs.saveBotSuggest({
+                botSuggest: 'Ничего не ставит',
+                link: this.link,
+            });
         }
 
         this.bet.value = `${bet}`;
@@ -274,7 +293,7 @@ class Selenium {
     async firstLayout() {
         const currentURL = await this.page.url();
 
-        this.browser.on('targetcreated', async (target) => {
+        this.browser.once('targetcreated', async (target) => {
             if (target.type() === 'page') {
                 console.log('new Page');
                 const page = await target.page();
@@ -318,7 +337,7 @@ class Selenium {
                     await span.click();
                     await spanClick();
                 } catch (e) {
-                    console.log('span click')
+                    // console.log('span click')
                 }
             }
         };

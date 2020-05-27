@@ -180,8 +180,10 @@
           <div class="mT-30">
             <form>
               <div class="form-group">
-                <input type="text" data-type="link" class="form-control" placeholder="Введите ссылку на тендер: " required>
-                <input type="number" data-type="bet" class="form-control" placeholder="Min ставка" step="1" min="0" required>
+                <input type="text" data-type="link" class="form-control" placeholder="Введите ссылку на тендер: "
+                       required>
+                <input type="number" data-type="bet" class="form-control" placeholder="Min ставка" step="1" min="0"
+                       required>
                 <select id="linkSelect" required>
                   <option value="">Выберите компанию</option>
                 </select>
@@ -206,6 +208,7 @@
                 <th>Мин. ставка</th>
                 <th>Статус</th>
                 <th>Время сл. этапа</th>
+                <th>Ставка бота</th>
                 <th></th>
                 <th></th>
                 <th>Логи</th>
@@ -234,8 +237,14 @@
     <section id="popupMakeABet">
       <section class="wrapper">
         <div class="yourSuggestion">
-          <span class="text">Ваше предложение:</span>
-          <span class="textBet"></span>
+          <div class="botBet">
+            <span class="text">Ставка бота: </span>
+            <span id="botSuggestion"></span>
+          </div>
+          <div class="yourBet">
+            <span class="text">Ваше предложение:</span>
+            <span class="textBet"></span>
+          </div>
         </div>
         <div class="systems">
           <form action="">

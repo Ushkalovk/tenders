@@ -70,6 +70,7 @@ class Template {
       creator: localStorage.getItem('email'),
       status: 'Не начался',
       timeForNextStep: '',
+      botSuggest: '',
       newTender: true,
       minBet,
     };
@@ -95,7 +96,7 @@ class Template {
   }
 
   addRow(dataTender, index) {
-    const {creationsTime, name, link, creator, status, timeForNextStep, company, minBet, isBotOn} = dataTender;
+    const {creationsTime, name, link, creator, status, timeForNextStep, company, minBet, isBotOn, botSuggest} = dataTender;
     // const shortLink = link.length > 15 ?
     //   `${link.split('')
     //     .splice(0, 15)
@@ -109,6 +110,7 @@ class Template {
       `${minBet} грн`,
       status,
       timeForNextStep,
+      botSuggest,
       `<button class='btn btn-primary' data-link="${dataTender.link}">${isBotOn ? 'Стоп' : 'Старт'}</button>`,
       `<button class='btn cur-p btn-danger' data-link="${dataTender.link}">Удалить</button>`,
       `<button class='btn cur-p btn-success' data-toggle='modal' data-target='#modalLogs' data-link="${dataTender.link}">Смотреть</button>`,
@@ -133,6 +135,15 @@ class Template {
     } else if (data.deleteTender) {
       this.deleteRow(data.link);
       this.updateRowsNumber();
+    } else if (data.botSuggest) {
+      this.refreshCellText({
+        cell: this.findRowByLink(data.link).children[8],
+        text: data.botSuggest,
+      });
+
+      if (this.activeLink === data.link) {
+        document.getElementById('botSuggestion').textContent = data.botSuggest;
+      }
     } else if (data.tenderName) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[2],
@@ -148,7 +159,7 @@ class Template {
       this.addRow(data, ++this.table.rows().data().length);
     } else if (data.toggleBot) {
       this.refreshCellText({
-        cell: this.findRowByLink(data.link).children[8],
+        cell: this.findRowByLink(data.link).children[9],
         text: `<button class='btn btn-primary' data-link="${data.link}">${data.isBotOn ? 'Стоп' : 'Старт'}</button>`,
       });
     } else if (data.isModalBets) {
@@ -160,7 +171,7 @@ class Template {
     }
   }
 
-  toggleVisibleModalBets(link, bet) {
+  toggleVisibleModalBets(link, bet, botSuggest) {
     const popup = document.getElementById('popupMakeABet');
 
     if (this.activeLink === link && bet) {
@@ -168,6 +179,7 @@ class Template {
       popup.style.display = 'block';
       popup.setAttribute('link', link);
       popup.querySelector('.textBet').textContent = ` ${bet}`;
+      document.getElementById('botSuggestion').textContent = `${botSuggest}`;
     } else {
       document.getElementById('footer').style.display = 'block';
       popup.style.display = 'none';
@@ -196,10 +208,10 @@ class Template {
       .appendChild(elem);
   }
 
-  showBets({logs, numberOfParticipants}, link, isBotOn, timer, panelBid) {
+  showBets({logs, numberOfParticipants}, link, isBotOn, timer, panelBid, botSuggest) {
     this.activeLink = link;
 
-    panelBid && this.toggleVisibleModalBets(link, panelBid);
+    panelBid && this.toggleVisibleModalBets(link, panelBid, botSuggest);
 
     document.getElementById('mainInfo').style.display = 'none';
     document.getElementById('betsPage').style.display = 'flex';
