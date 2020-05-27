@@ -87,37 +87,6 @@ class Server {
       .then(resp => resp.json());
   }
 
-  startTender(link, companyName) {
-    return fetch(`${this.baseUrl}/tender`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        role: localStorage.getItem('role'),
-        email: localStorage.getItem('email'),
-        link,
-        companyName
-      }),
-    })
-      .then(resp => resp.json());
-  }
-
-  stopTender(link) {
-    return fetch(`${this.baseUrl}/stopTender`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        link,
-        role: localStorage.getItem('role'),
-        email: localStorage.getItem('email'),
-      }),
-    })
-      .then(resp => resp.json());
-  }
-
   makeABet(link, bet) {
     return fetch(`${this.baseUrl}/makeABet`, {
       method: 'PUT',

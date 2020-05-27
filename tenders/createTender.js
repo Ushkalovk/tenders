@@ -2,6 +2,7 @@ const Tender = require('../models/tender');
 const selenium = require('../selenium/index');
 const sendMessageToClient = require("./sendMessageToClient");
 const find = require('../company/find');
+const activeTenders = require('./activeTenders');
 
 module.exports = (req, res) => {
     const {creationsTime, link, creator, status, timeForNextStep, company, minBet} = req.body;
@@ -11,8 +12,6 @@ module.exports = (req, res) => {
 
         if (!tender) {
             const newTender = new Tender();
-
-            selenium({link, isParseName: true, login, password, proxyIP, proxyLogin, proxyPassword, company});
 
             newTender.creationsTime = creationsTime;
             newTender.name = '';
@@ -28,6 +27,20 @@ module.exports = (req, res) => {
             newTender.panelBid = '';
             newTender.minBet = minBet;
             newTender.logs = [];
+
+            activeTenders[link] = selenium({
+                link,
+                currentMemberNumber: 0,
+                username: creator,
+                login,
+                password,
+                proxyIP,
+                proxyLogin,
+                proxyPassword,
+                minBet,
+                company,
+                isBotOn: false
+            });
 
             newTender.save(err => {
                 if (err) throw err;

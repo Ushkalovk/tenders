@@ -37,22 +37,15 @@ if (window.location.pathname === '/index.html') {
 
       if (target.tagName === 'BUTTON') {
         const link = target.getAttribute('data-link');
-        const companyName = template.findRowByLink(link).children[4].children[0].value;
 
         target.setAttribute('disabled', 'true');
 
         if (target.classList.contains('btn-primary')) {
-          target.textContent === 'Старт' ?
-            server.startTender(link, companyName)
-              .then(resp => {
-                !resp.status && createErrorMessage(resp.message);
-                target.removeAttribute('disabled');
-              }) :
-            server.stopTender(link)
-              .then(resp => {
-                !resp.status && createErrorMessage(resp.message);
-                target.removeAttribute('disabled');
-              });
+          server.toggleBot(link)
+            .then(response => {
+              !response.status && createErrorMessage(response.message);
+              target.removeAttribute('disabled');
+            });
         }
 
         if (target.classList.contains('btn-danger')) {
@@ -126,16 +119,6 @@ if (window.location.pathname === '/index.html') {
       document.getElementById('mainInfo').style.display = 'block';
       document.getElementById('betsPage').style.display = 'none';
       template.toggleVisibleModalBets(template.activeLink);
-    });
-
-  document.getElementById('bot')
-    .addEventListener('click', e => {
-      e.target.setAttribute('disabled', 'true');
-      server.toggleBot(template.activeLink)
-        .then(response => {
-          !response.status && createErrorMessage(response.message);
-          e.target.removeAttribute('disabled');
-        });
     });
 
   document.getElementById('popupMakeABet')

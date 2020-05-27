@@ -4,7 +4,7 @@ const puppeteer = require('puppeteer');
 const Algorithm = require('./algorithm');
 
 class Selenium {
-    constructor({link, currentMemberNumber, username, login, password, proxyIP, isParseName = false, proxyLogin, proxyPassword, company, isBotOn, minBet}) {
+    constructor({link, currentMemberNumber, username, login, password, proxyIP, proxyLogin, proxyPassword, company, isBotOn, minBet}) {
         this.tender = require('../tenders/index');
         this.algorithm = new Algorithm(minBet);
         this.logs = require('../logs/index');
@@ -33,10 +33,10 @@ class Selenium {
             value: null
         };
 
-        this.createPage(isParseName)
+        this.createPage()
     }
 
-    async createPage(isParseName) {
+    async createPage() {
         const proxyUrl = `http://${this.proxy}`;
 
         this.browser = await puppeteer.launch({
@@ -48,7 +48,7 @@ class Selenium {
         await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
-        this.open(isParseName)
+        this.open()
     }
 
     async checkDocument() {
@@ -57,12 +57,12 @@ class Selenium {
         !doc && await this.stop({message: `Проверьте срок действия прокси компании ${this.company}`, disable: true});
     }
 
-    async open(isParseName) {
+    async open() {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             this.checkDocument();
 
-            isParseName ? this.parseName() : this.auth();
+            await this.parseName();
         } catch (e) {
             let message = '';
 
@@ -82,32 +82,12 @@ class Selenium {
             const text = await this.page.$eval('.ivu-card-body [data-qa=title]', element => element.textContent);
 
             this.tender.setTenderName({tenderName: text, link: this.link});
-            await this.stop({disable: false});
+            this.auth();
         } catch (e) {
             e.name === 'TimeoutError' && await this.stop({
                 message: `Не получилось найти имя тендера со следующей ссылкой: ${this.link}`,
                 disable: false
             })
-        }
-    }
-
-    async parseTime(time = '') {
-        if (this.isStop) {
-            return
-        }
-
-        try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 5000});
-            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
-
-            currentTime !== time && this.tender.setTimeForNextStep({
-                timer: currentTime,
-                link: this.link
-            });
-
-            this.parseTime(currentTime);
-        } catch (e) {
-            console.log('упс')
         }
     }
 
@@ -294,7 +274,7 @@ class Selenium {
     async firstLayout() {
         const currentURL = await this.page.url();
 
-        this.browser.once('targetcreated', async (target) => {
+        this.browser.on('targetcreated', async (target) => {
             if (target.type() === 'page') {
                 console.log('new Page');
                 const page = await target.page();
@@ -410,36 +390,63 @@ class Selenium {
         console.log(step, 'bet step')
     }
 
-    async switchToSecondWindow() {
-        try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 30000});
-            await this.page.click('.btn.btn-success');
+    async parseTime({time = '', stop}) {
+        if (this.isStop) {
+            return
+        }
 
-            this.parseTime();
-            this.search();
-            this.findPanelBet();
+        try {
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 5000});
+            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
+
+            if (stop) {
+                if (currentTime.trim() === '0сек') {
+                    this.parseTime({time: currentTime, stop});
+                } else {
+                    this.tender.timers.createTimer({
+                        timer: currentTime,
+                        link: this.link,
+                        data: {
+                            link: this.link,
+                            login: this.login,
+                            password: this.password,
+                            proxyIP: this.proxy,
+                            proxyLogin: this.proxyLogin,
+                            proxyPassword: this.proxyPassword,
+                            email: this.bet.username,
+                            companyName: this.company,
+                            isBotOn: this.isBotOn,
+                            minBet: this.algorithm.minBet,
+                            currentMemberNumber: 0
+                        }
+                    });
+
+                    await this.stop({});
+                }
+            } else {
+                currentTime !== time && this.tender.setTimeForNextStep({
+                    timer: currentTime,
+                    link: this.link,
+                });
+
+                this.parseTime({time: currentTime, stop});
+            }
         } catch (e) {
-            this.parseTime();
-            await this.page.waitForSelector('a.btn.btn-success.btn-lg.btn-block.ng-scope span', {timeout: 1000 * 60 * 60 * 6});
-            this.reStart();
+            console.log('упс')
         }
     }
 
-    async reStart() {
-        await this.stop({disable: false});
+    async switchToSecondWindow() {
+        try {
+            await this.page.waitForSelector('.btn.btn-success', {timeout: 5000});
+            await this.page.click('.btn.btn-success');
 
-        await this.tender.setNewTender.run({
-            link: this.link,
-            login: this.login,
-            password: this.password,
-            proxyIP: this.proxy,
-            proxyLogin: this.proxyLogin,
-            proxyPassword: this.proxyPassword,
-            email: this.bet.username,
-            companyName: this.company,
-            isBotOn: this.isBotOn,
-            minBet: this.algorithm.minBet
-        });
+            this.parseTime({stop: false});
+            this.search();
+            this.findPanelBet();
+        } catch (e) {
+            await this.parseTime({stop: true});
+        }
     }
 
     async stop({message, disable = true}) {

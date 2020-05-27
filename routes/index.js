@@ -1,6 +1,5 @@
 const logs = require('../logs/index');
 const tender = require('../tenders/index');
-const SSE = require('../tenders/sendMessageToClient');
 const company = require('../company/index');
 const express = require('express');
 const token = require('../token/token');
@@ -71,15 +70,12 @@ module.exports = (passport) => {
     router.route('/tender')
         .get((req, res) => tender.getAllTenders(req, res))
         .post((req, res) => tender.createTender(req, res))
-        .put((req, res) => tender.setNewTender.find(req, res))
         .delete((req, res) => tender.removeTender.find(req, res));
 
     router.route('/company')
         .get((req, res) => company.get(req, res))
         .post((req, res) => company.create(req, res))
         .put((req, res) => company.updateProxy(req, res));
-
-    router.put('/stopTender', (req, res) => tender.stopTender(req, res));
 
     router.get('/logout', (req, res) => {
         req.logout();

@@ -10,7 +10,7 @@ module.exports = (object, blockLength) => {
                 $push: {logs: logs},
                 $set: {
                     numberOfParticipants: numberOfParticipants,
-                    status: logs.currentMemberNumber === numberOfParticipants - 1 ? 'Закончен' : 'Начат'
+                    status: logs.currentMemberNumber === numberOfParticipants - 1 ? 'Закончен' : 'Начат',
                 }
             }, {new: true}, (err, tender) => {
                 if (err) return console.log(err);

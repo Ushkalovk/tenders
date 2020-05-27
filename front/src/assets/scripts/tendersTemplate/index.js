@@ -96,7 +96,7 @@ class Template {
   }
 
   addRow(dataTender, index) {
-    const {creationsTime, name, link, creator, status, timeForNextStep, isWork, company, minBet} = dataTender;
+    const {creationsTime, name, link, creator, status, timeForNextStep, company, minBet, isBotOn} = dataTender;
     // const shortLink = link.length > 15 ?
     //   `${link.split('')
     //     .splice(0, 15)
@@ -106,11 +106,11 @@ class Template {
       creationsTime,
       `<a href=${link} target="_blank">${name}</a>`,
       creator,
-      '<select data-type="company"></select>',
+      company,
       `${minBet} грн`,
       status,
       timeForNextStep,
-      `<button class='btn btn-primary' data-link="${dataTender.link}">${isWork ? 'Стоп' : 'Старт'}</button>`,
+      `<button class='btn btn-primary' data-link="${dataTender.link}">${isBotOn ? 'Стоп' : 'Старт'}</button>`,
       `<button class='btn cur-p btn-danger' data-link="${dataTender.link}">Удалить</button>`,
       `<button class='btn cur-p btn-success' data-toggle='modal' data-target='#modalLogs' data-link="${dataTender.link}">Смотреть</button>`,
       `<button class='btn cur-p btn-info' data-link="${dataTender.link}">Перейти</button>`,
@@ -119,24 +119,6 @@ class Template {
       .node();
 
     row.setAttribute('data-link', dataTender.link);
-
-    this.createSelect(link, company);
-  }
-
-  createSelect(link, company) {
-    const cell = this.findRowByLink(link).children[4];
-    const select = cell.children[0];
-
-    this.companies.forEach(item => {
-      const option = document.createElement('option');
-      option.textContent = item.name;
-
-      item.name === company && option.setAttribute('selected', 'selected');
-
-      select.appendChild(option);
-    });
-
-    this.table.cell(cell).draw();
   }
 
   dispatch(data) {
@@ -160,13 +142,11 @@ class Template {
       }
     } else if (data.newTender) {
       this.addRow(data, ++this.table.rows().data().length);
-    } else if (data.toggleTender) {
+    } else if (data.toggleBot) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[8],
-        text: `<button class='btn btn-primary' data-link="${data.link}">${data.isWork ? 'Стоп' : 'Старт'}</button>`,
+        text: `<button class='btn btn-primary' data-link="${data.link}">${data.isBotOn ? 'Стоп' : 'Старт'}</button>`,
       });
-    } else if (data.toggleBot) {
-      document.getElementById('bot').textContent = data.isBotOn ? 'Выключить бота' : 'Включить бота';
     } else if (data.isModalBets) {
       this.toggleVisibleModalBets(data.link, data.bet);
     }
@@ -228,8 +208,6 @@ class Template {
     }));
 
     document.getElementById('timer').textContent = timer;
-    document.getElementById('betsPage')
-      .querySelector('#bot').textContent = isBotOn ? 'Выключить бота' : 'Включить бота';
   }
 
   findRowByLink(link) {
