@@ -26,6 +26,7 @@ module.exports = (req, res) => {
             newTender.allowToDelete = true;
             newTender.panelBid = '';
             newTender.minBet = minBet;
+            newTender.botSuggest = '';
             newTender.logs = [];
 
             activeTenders[link] = selenium({
