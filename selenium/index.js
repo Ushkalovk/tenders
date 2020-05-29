@@ -307,17 +307,6 @@ class Selenium {
             }
         });
 
-        await this.page.waitForSelector('[data-qa=budget-min-step] div:last-child', {visible: true});
-        const parsePercent = await this.page.$eval('[data-qa=budget-min-step] div:last-child', element => element.textContent);
-        const budget = await this.page.$eval('[data-qa=budget-amount]', element => element.innerText);
-
-        this.parseMinStep(parsePercent, budget);
-
-        await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
-        await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
-
-        await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span', {timeout: 5000});
-
         const spanClick = async () => {
             const span = await this.page.$('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
 
@@ -342,7 +331,22 @@ class Selenium {
             }
         };
 
-        await spanClick();
+        try {
+            await this.page.waitForSelector('[data-qa=budget-min-step] div:last-child', {visible: true});
+            const parsePercent = await this.page.$eval('[data-qa=budget-min-step] div:last-child', element => element.textContent);
+            const budget = await this.page.$eval('[data-qa=budget-amount]', element => element.innerText);
+
+            this.parseMinStep(parsePercent, budget);
+
+            await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
+            await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
+
+            await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span', {timeout: 5000});
+            await spanClick();
+        } catch (e) {
+            console.log('На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов)');
+            await this.stop({message: `На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов): ${this.link}`})
+        }
     }
 
     async secondLayout() {
@@ -421,6 +425,7 @@ class Selenium {
             if (stop) {
                 if (currentTime.trim() === '0сек') {
                     this.parseTime({time: currentTime, stop});
+                    console.log(currentTime, 'time')
                 } else {
                     this.tender.timers.createTimer({
                         timer: currentTime,

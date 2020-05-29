@@ -97,14 +97,14 @@ class Template {
 
   addRow(dataTender, index) {
     const {creationsTime, name, link, creator, status, timeForNextStep, company, minBet, isBotOn, botSuggest} = dataTender;
-    // const shortLink = link.length > 15 ?
-    //   `${link.split('')
-    //     .splice(0, 15)
-    //     .join('')}...` : link;
+    const shortLink = link.length > 20 ?
+      `${link.split('')
+        .splice(0, 20)
+        .join('')}...` : link;
     const row = this.table.row.add([
       index,
       creationsTime,
-      `<a href=${link} target="_blank">${name}</a>`,
+      `<a href=${link} target="_blank">${name || shortLink}</a>`,
       creator,
       company,
       `${minBet} грн`,
