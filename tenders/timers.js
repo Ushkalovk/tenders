@@ -40,10 +40,10 @@ module.exports = {
             setTimeForNextStep({timer: formatTime(countdown), link});
 
             if (!Math.max(ms - 10 * 60 * 1000, 0)) {
-                setTimeForNextStep({timer: 'Запуск тендера...', link});
                 delete activeTenders[link];
                 activeTenders[link] = selenium(data);
                 console.log('run tender');
+                setTimeForNextStep({timer: 'Запуск тендера...', link});
                 updateEverySec.stop();
             }
         });

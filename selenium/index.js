@@ -142,7 +142,7 @@ class Selenium {
                 index === parents.length - 1 && this.search();
             }
         } catch (e) {
-            console.log(e.message)
+            console.log(e.message, 'search')
             // if (e.message.includes('Target closed')) {
             await this.stop({message: `Тендер со следующей ссылкой: ${this.link} закрыт`, disable: true});
             // }
@@ -197,7 +197,7 @@ class Selenium {
 
             this.findPanelBet();
         } catch (e) {
-            console.log("can't find panel")
+            console.log("can't find panel", e.message)
         }
     }
 
@@ -456,7 +456,7 @@ class Selenium {
                 this.parseTime({time: currentTime, stop});
             }
         } catch (e) {
-            console.log('упс')
+            console.log('упс', e.message)
         }
     }
 
@@ -465,10 +465,14 @@ class Selenium {
             await this.page.waitForSelector('.btn.btn-success', {timeout: 5000});
             await this.page.click('.btn.btn-success');
 
+            console.log('.btn.btn-success нажата');
+
             this.parseTime({stop: false});
             this.search();
             this.findPanelBet();
         } catch (e) {
+            console.log('.btn.btn-success не нажата');
+
             await this.parseTime({stop: true});
         }
     }
