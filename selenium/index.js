@@ -210,7 +210,7 @@ class Selenium {
         });
 
         this.logs.saveBotSuggest({
-            botSuggest: '',
+            botSuggest: ' ',
             link: this.link,
         });
     }
@@ -260,7 +260,7 @@ class Selenium {
             await this.page.click('#place-bid-button');
 
             this.logs.saveBotSuggest({
-                botSuggest: `${bet}`,
+                botSuggest: `${bet} грн.`,
                 link: this.link,
             });
         } else {
@@ -295,7 +295,7 @@ class Selenium {
 
         this.browser.once('targetcreated', async (target) => {
             if (target.type() === 'page') {
-                console.log('new Page');
+                console.log('new Page open');
                 const page = await target.page();
                 const url = page.url();
 
@@ -344,7 +344,7 @@ class Selenium {
             await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span', {timeout: 5000});
             await spanClick();
         } catch (e) {
-            console.log('На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов)');
+            console.log('На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов)', e.message);
             await this.stop({message: `На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов): ${this.link}`})
         }
     }
