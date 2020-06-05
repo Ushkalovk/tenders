@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
 
     if (tender.creator === email || role === 'admin') {
         try {
-            activeTenders[link].enterBet(bet, email);
+            activeTenders[link].enterBet({bet, allow: true}, email);
 
             await res.json({status: true, message: 'Ставка принята'})
         } catch (e) {

@@ -1,6 +1,6 @@
 class Algorithm {
     constructor(minBet) {
-        this.myName = ['Ви'];
+        this.myName = ['Ви', 'ООО Промэлектроника'];
         this.roundsCount = 4;
         this.minBet = minBet;
         this.bet = 0;
@@ -55,9 +55,9 @@ class Algorithm {
             return {bet: this.bet, allow: false};
         }
 
-        if (!filterBets.length) {
-            return {bet: this.minBet, allow: true};
-        }
+        // if (!filterBets.length) {
+        //     return {bet: this.minBet, allow: true};
+        // }
 
         if (round < 3) {
             if ((bets.length && bets.length + 1 !== participants.length && betBelowOurs.length) || !bets.length) {

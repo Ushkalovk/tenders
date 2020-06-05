@@ -4,11 +4,40 @@ import 'datatables';
 
 class Template {
   constructor() {
+    (function () {
+      jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+        "formatted-num-pre": function (string) {
+          console.log(string, parseInt(string.match(/\d+/)));
+
+          return parseInt(string.match(/\d+/));
+        },
+
+        "formatted-num-asc": function (a, b) {
+          return a - b;
+        },
+
+        "formatted-num-desc": function (a, b) {
+          return b - a;
+        }
+      });
+    }());
+
     this.table = $('#dataTable')
       .DataTable({
         'pageLength': 100,
         'lengthMenu': [[50, 100, 200, -1], [50, 100, 200, 'All']],
+        columnDefs: [
+          {
+            targets: [5],
+            "type": "formatted-num",
+          },
+          {
+            targets: [7],
+            "type": "formatted-num",
+          },
+        ]
       });
+
     this.tableLogs = document.querySelector('#tableLogs tbody');
     this.activeLink = null;
 
@@ -96,7 +125,7 @@ class Template {
   }
 
   addRow(dataTender, index) {
-    const {creationsTime, name, link, creator, status, timeForNextStep, company, minBet, isBotOn, botSuggest} = dataTender;
+    const {creationsTime, name, link, creator, status, timeForNextStep, timeForNextStepMs, company, minBet, isBotOn, botSuggest} = dataTender;
     const shortLink = link.length > 20 ?
       `${link.split('')
         .splice(0, 20)
@@ -107,9 +136,9 @@ class Template {
       `<a href=${link} target="_blank">${name || shortLink}</a>`,
       creator,
       company,
-      `${minBet} грн`,
+      `<!-- ${minBet} -->${minBet} грн`,
       status,
-      timeForNextStep,
+      `<!-- ${!timeForNextStepMs ? 0 : timeForNextStepMs} -->${timeForNextStep}`,
       botSuggest,
       `<button class='btn btn-primary' data-link="${dataTender.link}">${isBotOn ? 'Стоп' : 'Старт'}</button>`,
       `<button class='btn cur-p btn-danger' data-link="${dataTender.link}">Удалить</button>`,
@@ -150,13 +179,13 @@ class Template {
         text: `<a href=${data.link} target="_blank">${data.tenderName}</a>`,
       });
     } else if (data.timer) {
-      this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: data.timer});
+      this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: `<!-- ${data.ms} -->${data.timer}`});
 
       if (this.activeLink === data.link) {
         document.getElementById('timer').textContent = data.timer;
       }
     } else if (data.newTender) {
-      this.addRow(data, ++this.table.rows().data().length);
+      this.addRow(data, `${++this.table.rows().data().length}`);
     } else if (data.toggleBot) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[9],
@@ -179,7 +208,10 @@ class Template {
       popup.style.display = 'block';
       popup.setAttribute('link', link);
       popup.querySelector('.textBet').textContent = ` ${bet}`;
-      document.getElementById('botSuggestion').textContent = `${botSuggest}`;
+
+      if (botSuggest) {
+        document.getElementById('botSuggestion').textContent = `${botSuggest}`;
+      }
     } else {
       document.getElementById('footer').style.display = 'block';
       popup.style.display = 'none';

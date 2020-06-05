@@ -2,9 +2,10 @@
 
 const puppeteer = require('puppeteer');
 const Algorithm = require('./algorithm');
+const timeToMs = require('./timeToMs');
 
 class Selenium {
-    constructor({link, currentMemberNumber, username, login, password, proxyIP, proxyLogin, proxyPassword, company, isBotOn, minBet}) {
+    constructor({link, currentMemberNumber, username, login, password, proxyIP, proxyLogin, proxyPassword, company, isBotOn, minBet, firstLaunch}) {
         this.tender = require('../tenders/index');
         this.algorithm = new Algorithm(minBet);
         this.logs = require('../logs/index');
@@ -22,6 +23,8 @@ class Selenium {
         this.isBotOn = isBotOn;
         this.currentRound = 0;
         this.allowParse = true;
+        this.newPage = false;
+        this.firstLaunch = firstLaunch;
 
         this.alert = {
             open: false,
@@ -60,7 +63,7 @@ class Selenium {
     async open() {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
-            this.checkDocument();
+            await this.checkDocument();
 
             await this.parseName();
         } catch (e) {
@@ -259,11 +262,13 @@ class Selenium {
             await this.page.type('#bid-amount-input', `${bet}`);
             await this.page.click('#place-bid-button');
 
-            this.logs.saveBotSuggest({
+            username === 'Бот' && this.logs.saveBotSuggest({
                 botSuggest: `${bet} грн.`,
                 link: this.link,
             });
-        } else {
+        }
+
+        if (!allow) {
             this.logs.saveBotSuggest({
                 botSuggest: 'Ничего не ставит',
                 link: this.link,
@@ -295,12 +300,14 @@ class Selenium {
 
         this.browser.once('targetcreated', async (target) => {
             if (target.type() === 'page') {
-                console.log('new Page open');
                 const page = await target.page();
                 const url = page.url();
 
-                if (url !== currentURL) {
+                if (url !== currentURL && !this.newPage) {
                     await this.page.close();
+
+                    this.newPage = true;
+                    console.log('new Page open', this.link);
                     this.page = page;
                     this.switchToSecondWindow();
                 }
@@ -419,16 +426,15 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 5000});
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 60000});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
 
             if (stop) {
                 if (currentTime.trim() === '0сек') {
                     this.parseTime({time: currentTime, stop});
-                    console.log(currentTime, 'time')
                 } else {
                     this.tender.timers.createTimer({
-                        timer: currentTime,
+                        ms: timeToMs(currentTime),
                         link: this.link,
                         data: {
                             link: this.link,
@@ -437,11 +443,11 @@ class Selenium {
                             proxyIP: this.proxy,
                             proxyLogin: this.proxyLogin,
                             proxyPassword: this.proxyPassword,
-                            email: this.bet.username,
+                            username: this.bet.username,
                             companyName: this.company,
-                            isBotOn: this.isBotOn,
                             minBet: this.algorithm.minBet,
-                            currentMemberNumber: 0
+                            currentMemberNumber: 0,
+                            firstLaunch: this.firstLaunch
                         }
                     });
 
@@ -450,6 +456,7 @@ class Selenium {
             } else {
                 currentTime !== time && this.tender.setTimeForNextStep({
                     timer: currentTime,
+                    ms: !this.length ? timeToMs(currentTime) : 0,
                     link: this.link,
                 });
 
@@ -461,19 +468,23 @@ class Selenium {
     }
 
     async switchToSecondWindow() {
-        try {
-            await this.page.waitForSelector('.btn.btn-success', {timeout: 5000});
-            await this.page.click('.btn.btn-success');
-
-            console.log('.btn.btn-success нажата');
-
-            this.parseTime({stop: false});
-            this.search();
-            this.findPanelBet();
-        } catch (e) {
-            console.log('.btn.btn-success не нажата');
+        if (this.firstLaunch) {
+            this.firstLaunch = false;
 
             await this.parseTime({stop: true});
+        } else {
+            try {
+                await this.page.waitForSelector('.btn.btn-success', {timeout: 60000});
+                await this.page.click('.btn.btn-success');
+
+                console.log('.btn.btn-success нажата');
+
+                this.parseTime({stop: false});
+                this.search();
+                this.findPanelBet();
+            } catch (e) {
+                console.log('.btn.btn-success не нажата', e.message);
+            }
         }
     }
 

@@ -1,51 +1,41 @@
 const CronJob = require('cron').CronJob;
+const Tender = require('../models/tender');
 const setTimeForNextStep = require('./setTimeForNextStep');
 const activeTenders = require('./activeTenders');
 const selenium = require('../selenium/index');
 
-const parseTime = (string) => {
-    let betText = string.trim();
-    let hoursMs = 0;
-    let minMs = 0;
-
-    if (betText.includes('год')) {
-        const index = betText.indexOf('год');
-        hoursMs = Math.max(+betText.slice(0, index), 1) * 60 * 60 * 1000;
-
-        betText = betText.slice(index + 4);
-    }
-
-    if (betText.includes('хв')) {
-        minMs = Math.max(+betText.slice(0, betText.indexOf('хв')), 1) * 60 * 1000;
-    }
-
-    return hoursMs + minMs;
+const runTender = data => {
+    Tender.findOne({'link': data.link}, (err, tender) => {
+        if (tender && !activeTenders[data.link]) {
+            activeTenders[data.link] = selenium({...data, isBotOn: tender.isBotOn});
+        }
+    });
 };
 
-const formatTime = (date) => {
+const formatTime = (ms) => {
+    const date = new Date(ms);
+
     return date.getHours() - 3 > 0 ?
         `${date.getHours() - 3}ч. ${date.getMinutes()}мин. до начала` :
         `${date.getMinutes()}мин. ${date.getSeconds()}сек. до начала`;
 };
 
-
 module.exports = {
-    createTimer({timer, link, data}) {
-        const futureTime = Date.now() + parseTime(timer);
+    createTimer({ms, link, data}) {
+        const futureTime = Date.now() + ms;
 
-        const updateEverySec = new CronJob('* * * * * *', function () {
-            const ms = futureTime - Date.now();
-            const countdown = new Date(ms);
+        const updateEverySec = new CronJob('* * * * * *', () => {
+            const msLeft = futureTime - Date.now();
 
-            setTimeForNextStep({timer: formatTime(countdown), link});
+            setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
 
-            if (!Math.max(ms - 10 * 60 * 1000, 0)) {
-                delete activeTenders[link];
-                activeTenders[link] = selenium(data);
-                console.log('run tender');
-                setTimeForNextStep({timer: 'Запуск тендера...', link});
-                updateEverySec.stop();
-            }
+            !Math.max(msLeft - 10 * 60 * 1000, 0) && updateEverySec.stop();
+        }, () => {
+            delete activeTenders[link];
+            runTender(data);
+            console.log('Запуск тендера...');
+
+            setTimeout(() => setTimeForNextStep({timer: 'Запуск тендера...', link}), 1000);
         });
 
         updateEverySec.start();

@@ -40,7 +40,8 @@ module.exports = (req, res) => {
                 proxyPassword,
                 minBet,
                 company,
-                isBotOn: false
+                isBotOn: false,
+                firstLaunch: true
             });
 
             newTender.save(err => {

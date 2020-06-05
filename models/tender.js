@@ -8,6 +8,7 @@ module.exports = mongoose.model('Tender', {
     company: String,
     status: String,
     timeForNextStep: String,
+    timeForNextStepMs: Number,
     numberOfParticipants: Number,
     isBotOn: Boolean,
     isWork: Boolean,
