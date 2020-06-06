@@ -20,6 +20,7 @@ module.exports = (req, res) => {
             newTender.company = company;
             newTender.status = status;
             newTender.timeForNextStep = timeForNextStep;
+            newTender.timeForNextStepMs = 0;
             newTender.numberOfParticipants = 0;
             newTender.isBotOn = false;
             newTender.isWork = false;

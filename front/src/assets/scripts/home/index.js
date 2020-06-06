@@ -2,11 +2,6 @@ import {template} from '../tendersTemplate';
 import {server} from '../server';
 import {createErrorMessage} from '../error/index';
 
-
-// if (!localStorage.getItem('email')) {
-//   window.location.href = './signin.html';
-// }
-
 const setUserInfo = () => {
   const role = localStorage.getItem('role') === 'admin' ?
     'Администратор' :
@@ -28,58 +23,63 @@ if (window.location.pathname !== '/signin.html' && window.location.pathname !== 
   }
 }
 
+const tableActions = {
+  bot(link, target) {
+    server.toggleBot(link)
+      .then(response => {
+        !response.status && createErrorMessage(response.message);
+
+        target.removeAttribute('disabled');
+      });
+  },
+
+  delete(link, target) {
+    server.deleteTender(link)
+      .then(isDelete => {
+        !isDelete.status && createErrorMessage(isDelete.message);
+
+        target.removeAttribute('disabled');
+      });
+  },
+
+  logs(link, target) {
+    target.removeAttribute('disabled');
+
+    server.getLogs(link)
+      .then(response => {
+        console.log(response);
+        if (response.status) {
+          template.removePreviousTr();
+          response.object.logs.forEach((object, index) => template.showLogs(object, index));
+        }
+      });
+  },
+
+  bets(link, target) {
+    server.getLogs(link)
+      .then(response => {
+        target.removeAttribute('disabled');
+
+        response.status && template.showBets(
+          response.object, link, response.isBotOn, response.timer, response.panelBid, response.botSuggest
+        );
+      });
+  }
+};
+
 if (window.location.pathname === '/index.html') {
   template.createRows();
 
   document.querySelector('#dataTable tbody')
     .addEventListener('click', (e) => {
-      const target = e.target;
+      const action = e.target.dataset.action;
 
-      if (target.tagName === 'BUTTON') {
-        const link = target.getAttribute('data-link');
+      if (action) {
+        const link = e.target.dataset.link;
 
-        target.setAttribute('disabled', 'true');
+        e.target.setAttribute('disabled', 'true');
 
-        if (target.classList.contains('btn-primary')) {
-          server.toggleBot(link)
-            .then(response => {
-              !response.status && createErrorMessage(response.message);
-              target.removeAttribute('disabled');
-            });
-        }
-
-        if (target.classList.contains('btn-danger')) {
-          server.deleteTender(link)
-            .then(isDelete => {
-              !isDelete.status && createErrorMessage(isDelete.message);
-
-              target.removeAttribute('disabled');
-            });
-        }
-
-        if (target.classList.contains('btn-success')) {
-          target.removeAttribute('disabled');
-
-          server.getLogs(link)
-            .then(response => {
-              console.log(response);
-              if (response.status) {
-                template.removePreviousTr();
-                response.object.logs.forEach((object, index) => template.showLogs(object, index));
-              }
-            });
-        }
-
-        if (target.classList.contains('btn-info')) {
-          server.getLogs(link)
-            .then(response => {
-              target.removeAttribute('disabled');
-
-              response.status && template.showBets(
-                response.object, link, response.isBotOn, response.timer, response.panelBid, response.botSuggest
-              );
-            });
-        }
+        tableActions[action](link, e.target);
       }
     });
 
@@ -141,14 +141,6 @@ if (window.location.pathname === '/index.html') {
           });
       }
     });
-
-
-  // меняем базовый текст с англ на русский
-
-  document.querySelector('#dataTable_filter label').firstChild.textContent = 'Поиск: ';
-  document.querySelector('#dataTable_length label').firstChild.textContent = 'Вывести ';
-  document.querySelector('#dataTable_length label').lastChild.textContent = ' элементов';
-  document.querySelector('.dataTables_empty').textContent = 'Данных нет';
 }
 
 

@@ -6,36 +6,57 @@ class Template {
   constructor() {
     (function () {
       jQuery.extend(jQuery.fn.dataTableExt.oSort, {
-        "formatted-num-pre": function (string) {
+        'formatted-num-pre': function (string) {
           console.log(string, parseInt(string.match(/\d+/)));
 
           return parseInt(string.match(/\d+/));
         },
 
-        "formatted-num-asc": function (a, b) {
+        'formatted-num-asc': function (a, b) {
           return a - b;
         },
 
-        "formatted-num-desc": function (a, b) {
+        'formatted-num-desc': function (a, b) {
           return b - a;
-        }
+        },
       });
     }());
 
     this.table = $('#dataTable')
       .DataTable({
+        'language': {
+          'sProcessing':   'Подождите...',
+          'sLengthMenu':   'Показать _MENU_ записей',
+          'sZeroRecords':  'Записи отсутствуют.',
+          'sInfo':         'Записи с _START_ до _END_ из _TOTAL_ записей',
+          'sInfoEmpty':    'Записи с 0 до 0 из 0 записей',
+          'sInfoFiltered': '(отфильтровано из _MAX_ записей)',
+          'sInfoPostFix':  '',
+          'sSearch':       'Поиск:',
+          'sUrl':          '',
+          'oPaginate': {
+            'sFirst': 'Первая',
+            'sPrevious': 'Предыдущая',
+            'sNext': 'Следующая',
+            'sLast': 'Последняя',
+          },
+          'oAria': {
+            'sSortAscending':  ': активировать для сортировки столбца по возрастанию',
+            'sSortDescending': ': активировать для сортировки столбцов по убыванию',
+          },
+        },
         'pageLength': 100,
-        'lengthMenu': [[50, 100, 200, -1], [50, 100, 200, 'All']],
+        'lengthMenu': [[50, 100, 200, -1], [50, 100, 200, 'Все']],
         columnDefs: [
           {
             targets: [5],
-            "type": "formatted-num",
+            'type': 'formatted-num',
           },
           {
             targets: [7],
-            "type": "formatted-num",
+            'type': 'formatted-num',
           },
-        ]
+        ],
       });
 
     this.tableLogs = document.querySelector('#tableLogs tbody');
@@ -133,17 +154,17 @@ class Template {
     const row = this.table.row.add([
       index,
       creationsTime,
-      `<a href=${link} target="_blank">${name || shortLink}</a>`,
+      `<a href=${link} target='_blank'>${name || shortLink}</a>`,
       creator,
       company,
       `<!-- ${minBet} -->${minBet} грн`,
       status,
       `<!-- ${!timeForNextStepMs ? 0 : timeForNextStepMs} -->${timeForNextStep}`,
       botSuggest,
-      `<button class='btn btn-primary' data-link="${dataTender.link}">${isBotOn ? 'Стоп' : 'Старт'}</button>`,
-      `<button class='btn cur-p btn-danger' data-link="${dataTender.link}">Удалить</button>`,
-      `<button class='btn cur-p btn-success' data-toggle='modal' data-target='#modalLogs' data-link="${dataTender.link}">Смотреть</button>`,
-      `<button class='btn cur-p btn-info' data-link="${dataTender.link}">Перейти</button>`,
+      `<button class='btn btn-primary' data-link='${dataTender.link}' data-action='bot'>${isBotOn ? 'Стоп' : 'Старт'}</button>`,
+      `<button class='btn cur-p btn-danger' data-link='${dataTender.link}' data-action='delete'>Удалить</button>`,
+      `<button class='btn cur-p btn-success' data-toggle='modal' data-target='#modalLogs' data-link='${dataTender.link}' data-action='logs'>Смотреть</button>`,
+      `<button class='btn cur-p btn-info' data-link='${dataTender.link}' data-action='bets'>Перейти</button>`,
     ])
       .draw()
       .node();
@@ -176,7 +197,7 @@ class Template {
     } else if (data.tenderName) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[2],
-        text: `<a href=${data.link} target="_blank">${data.tenderName}</a>`,
+        text: `<a href=${data.link} target='_blank'>${data.tenderName}</a>`,
       });
     } else if (data.timer) {
       this.refreshCellText({cell: this.findRowByLink(data.link).children[7], text: `<!-- ${data.ms} -->${data.timer}`});
@@ -189,7 +210,7 @@ class Template {
     } else if (data.toggleBot) {
       this.refreshCellText({
         cell: this.findRowByLink(data.link).children[9],
-        text: `<button class='btn btn-primary' data-link="${data.link}">${data.isBotOn ? 'Стоп' : 'Старт'}</button>`,
+        text: `<button class='btn btn-primary' data-link='${data.link}' data-action='bot'>${data.isBotOn ? 'Стоп' : 'Старт'}</button>`,
       });
     } else if (data.isModalBets) {
       this.toggleVisibleModalBets(data.link, data.bet);
@@ -259,7 +280,7 @@ class Template {
   }
 
   findRowByLink(link) {
-    return this.table.row(`[data-link="${link}"]`).node();
+    return this.table.row(`[data-link='${link}']`).node();
   }
 
   refreshCellText({cell, text}) {
