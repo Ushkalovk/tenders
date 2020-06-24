@@ -55,6 +55,8 @@ class Algorithm {
             return {bet: this.bet, allow: false};
         }
 
+        console.log(filterParticipants, isEveryUnderOurs, this.bet, ': filterParticipants, isEveryUnderOurs', 'myBet')
+
 
         if (round < 3) {
             if ((bets.length && bets.length + 1 !== participants.length && betBelowOurs.length) || !bets.length) {
@@ -71,7 +73,7 @@ class Algorithm {
                 const myBet = this.getMinBet(filterBets) - this.step;
                 console.log(myBet, 'myBet')
                 // если конкуренты поставили стаки, а наша оказалась всё ещё ниже - оставляем ту же
-                return {bet: Math.max(myBet, this.minBet), allow: true};
+                return {bet: Math.max(Math.min(myBet, this.bet - this.step - 5), this.minBet), allow: true};
             }
         } else {
             return betBelowOurs.length ?
