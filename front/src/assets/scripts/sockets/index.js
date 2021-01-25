@@ -2,7 +2,7 @@ import {template} from '../tendersTemplate';
 import io from 'socket.io-client';
 import {createErrorMessage} from "../error";
 
-const socket = io.connect();
+const socket = io.connect("http://194.87.236.64:8082");
 
 let connectErrorCount = 0;
 

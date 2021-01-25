@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
 const routes = require('./routes/index')(passport);
 require('./passport/init')(passport);
 
-app.use(cors({origin: 'http://localhost:8080'}));
+app.use(cors({origin: 'http://localhost:8082'}));
 app.use('/', express.static(path.join(__dirname, 'front', 'build')));
 
 app.get('/index.html', (req, res) => {
@@ -40,8 +40,8 @@ app.use(expressSession({secret: 'mySecretKey', saveUninitialized: true, resave: 
 app.use(passport.initialize());
 app.use(passport.session());
 
-http.listen(8080, () => {
-    console.log('listening on *:8080');
+http.listen(8082, () => {
+    console.log('listening on *:8082');
 });
 
 
