@@ -2,7 +2,8 @@ import { template } from "../tendersTemplate";
 import io from "socket.io-client";
 import { createErrorMessage } from "../error";
 
-const socket = io.connect("http://194.87.236.64:8082", {
+// const socket = io.connect("ws://localhost/ws", {
+const socket = io.connect("ws://194.87.236.64:8082", {
   upgrade: false,
   transports: ["websocket"],
 });
