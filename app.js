@@ -6,20 +6,6 @@ const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
 
-const monkey = require("node-monkey")({
-  server: {
-    server: http,
-  },
-});
-const monkeyFiles = monkey.getServerPaths();
-app.get("/monkey.js", function (req, res, next) {
-  res.sendFile(`${monkeyFiles.basePath}/${monkeyFiles.client}`);
-});
-
-app.get("/monkey", function (req, res, next) {
-  res.sendFile(`${monkeyFiles.basePath}/${monkeyFiles.index}`);
-});
-
 const io = require("socket.io")(http);
 module.exports = io;
 const logger = require("morgan");

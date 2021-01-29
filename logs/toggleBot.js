@@ -1,12 +1,9 @@
 const Tender = require("../models/tender");
 const sendMessageToClient = require("../tenders/sendMessageToClient");
 const activeTenders = require("../tenders/activeTenders");
-let NodeMonkey = require("node-monkey");
 
 const toggleBotOnSelenium = (link, isBotOn) => {
   activeTenders[link] && activeTenders[link].toggleBot(isBotOn);
-  let monkey1 = NodeMonkey(activeTenders);
-  let monkey2 = NodeMonkey(link);
 };
 
 module.exports = async (req, res) => {
