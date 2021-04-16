@@ -416,7 +416,7 @@ class Selenium {
         const step = +(budgetParse * (+percent.slice(0, spaceIndex) / 100)).toFixed(1);
 
         this.algorithm.setStep(step);
-
+        this.parseTime('')
         console.log(step, 'bet step')
     }
 
@@ -426,9 +426,8 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope', {timeout: 60000});
-            const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
-
+            await this.page.waitForSelector('[data-qa=auction] [data-qa=date-start]', {timeout: 1000});
+            const currentTime = await this.page.$eval('[data-qa=auction] [data-qa=date-start]', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
                     this.parseTime({time: currentTime, stop});

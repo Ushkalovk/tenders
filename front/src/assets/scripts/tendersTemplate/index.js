@@ -112,6 +112,7 @@ class Template {
   }
 
   createTender(link, company, minBet) {
+    console.log(link)
     const dataTender = {
       creationsTime: this.transformTime(new Date()),
       name: '',
@@ -159,7 +160,7 @@ class Template {
       company,
       `<!-- ${minBet} -->${minBet} грн`,
       status,
-      `<!-- ${!timeForNextStepMs ? 0 : timeForNextStepMs} -->${timeForNextStep}`,
+      `<!-- ${!timeForNextStep ? 0 : timeForNextStep} -->${timeForNextStep}`,
       botSuggest,
       `<button class='btn btn-primary' data-link='${dataTender.link}' data-action='bot'>${isBotOn ? 'Стоп' : 'Старт'}</button>`,
       `<button class='btn cur-p btn-danger' data-link='${dataTender.link}' data-action='delete'>Удалить</button>`,

@@ -7,7 +7,7 @@ import { createErrorMessage } from "../error";
 //   transports: ["websocket"],
 // });
 
-const socket = io.connect("ws://194.87.236.64:8082");
+const socket = io.connect("ws://194.87.236.8:8082");
 
 let connectErrorCount = 0;
 

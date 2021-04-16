@@ -94,7 +94,7 @@ if (window.location.pathname === '/index.html') {
 
       if (inputLink.value && select.value && inputBet.value) {
         const dataTender = template.createTender(inputLink.value, select.value, inputBet.value);
-
+        console.log(dataTender)
         server.createTender(dataTender)
           .then(response => {
             !response.status && createErrorMessage(response.message);
