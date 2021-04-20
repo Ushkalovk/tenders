@@ -62,6 +62,8 @@ class Selenium {
 
     async open() {
         try {
+            this.tender.sendMessageToClient({message: "открываю..."})
+
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             await this.checkDocument();
             console.log("Parse name")
