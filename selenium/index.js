@@ -81,7 +81,7 @@ class Selenium {
 
     async parseName() {
         try {
-            await this.page.waitForSelector('.ivu-card-body [data-qa=title]', {timeout: 60000});
+            await this.page.waitForSelector('.ivu-card-body [data-qa=title]');
             const text = await this.page.$eval('.ivu-card-body [data-qa=title]', element => element.textContent);
 
             this.tender.setTenderName({tenderName: text, link: this.link});
@@ -100,7 +100,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 1000 * 60 * 20});
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope');
 
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
@@ -319,7 +319,7 @@ class Selenium {
 
             if (span) {
                 try {
-                    const notice = await this.page.$('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to', {timeout: 10000});
+                    const notice = await this.page.$('.ivu-notice-notice.ivu-notice-notice-closable.ivu-notice-notice-with-desc.move-notice-leave-active.move-notice-leave-to');
 
                     if (notice) {
                         await this.stop({
@@ -348,7 +348,7 @@ class Selenium {
             await this.page.waitForSelector('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat', {visible: true});
             await this.page.click('button.font-15.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat');
 
-            await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span', {timeout: 5000});
+            await this.page.waitForSelector('a.smt-btn.smt-btn-warning.smt-btn-normal.smt-btn-circle.smt-btn-flat span');
             await spanClick();
         } catch (e) {
             console.log('На этой странице нет перехода к тендеру (скорее всего она общая и имеет несколько лотов)', e.message);
@@ -426,7 +426,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('[data-qa=auction] [data-qa=date-start]', {timeout: 1000});
+            await this.page.waitForSelector('[data-qa=auction] [data-qa=date-start]');
             const currentTime = await this.page.$eval('[data-qa=auction] [data-qa=date-start]', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
@@ -473,7 +473,7 @@ class Selenium {
             await this.parseTime({stop: true});
         } else {
             try {
-                await this.page.waitForSelector('.btn.btn-success', {timeout: 60000});
+                await this.page.waitForSelector('.btn.btn-success');
                 await this.page.click('.btn.btn-success');
 
                 console.log('.btn.btn-success нажата');
