@@ -8,7 +8,7 @@ import { createErrorMessage } from "../error";
 // });
 
 const socket = io.connect("http://194.87.236.8:8082");
-
+console.log("Front socket connection     ",socket)
 let connectErrorCount = 0;
 
 socket.on("connect_error", () => {
