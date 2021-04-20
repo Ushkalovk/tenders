@@ -46,6 +46,7 @@ class Selenium {
             args: [`--proxy-server=${proxyUrl}`, '--no-sandbox', '--disable-setuid-sandbox'],
             headless: true
         });
+        this.tender.sendMessageToClient({message: `${this.proxy}`})
 
         this.page = await this.browser.newPage();
         await this.page.setViewport({'width': 1920, 'height': 1080});
