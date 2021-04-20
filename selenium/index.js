@@ -64,7 +64,8 @@ class Selenium {
         try {
             await this.page.goto(this.link, {waitUntil: 'domcontentloaded'});
             await this.checkDocument();
-
+            console.log("Parse name")
+            this.tender.sendMessageToClient({message: "Parse name"})
             await this.parseName();
         } catch (e) {
             let message = '';
@@ -83,6 +84,8 @@ class Selenium {
         try {
             await this.page.waitForSelector('.ivu-card-body [data-qa=title]');
             const text = await this.page.$eval('.ivu-card-body [data-qa=title]', element => element.textContent);
+            console.log("Name ==", text)
+            this.tender.sendMessageToClient({message: `Name == ${text}`})
 
             this.tender.setTenderName({tenderName: text, link: this.link});
             this.auth();
