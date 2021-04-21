@@ -29,6 +29,7 @@ module.exports = async (req, res) => {
         res.json({ status: true, message: "Бот включен" });
       });
     } catch (error) {
+      console.log(error)
       await res.json({ status: false, message: "Не получить включить бота" });
     }
   } else {
