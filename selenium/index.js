@@ -474,7 +474,7 @@ class Selenium {
     async switchToSecondWindow() {
         if (this.firstLaunch) {
             this.firstLaunch = false;
-
+            console.log("switch parse time")
             await this.parseTime({stop: true});
         } else {
             try {
