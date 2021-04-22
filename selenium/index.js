@@ -325,7 +325,7 @@ class Selenium {
 
                     if (notice) {
                         await this.stop({
-                            message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"`,
+                            message: `Невозможно запустить тендер "${this.link}" под именем компании "${this.company}"  ${notice}`,
                             disable: true
                         });
 
@@ -418,7 +418,7 @@ class Selenium {
         const step = +(budgetParse * (+percent.slice(0, spaceIndex) / 100)).toFixed(1);
 
         this.algorithm.setStep(step);
-        this.parseTime('')
+        this.parseTime('', true)
         console.log(step, 'bet step')
     }
 
