@@ -418,7 +418,7 @@ class Selenium {
         const step = +(budgetParse * (+percent.slice(0, spaceIndex) / 100)).toFixed(1);
 
         this.algorithm.setStep(step);
-        this.parseTime({time: '', stop: true})
+        // this.parseTime({time: '', stop: true})
         console.log(step, 'bet step')
     }
 
