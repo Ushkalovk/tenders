@@ -428,8 +428,8 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('title.ng-binding.ng-scope');
-            const currentTime = await this.page.$eval('title.ng-binding.ng-scope', time => time.innerText);
+            await this.page.waitForSelector('head title.ng-binding.ng-scope');
+            const currentTime = await this.page.$eval('head title.ng-binding.ng-scope', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
                     this.parseTime({time: currentTime, stop});
@@ -475,7 +475,7 @@ class Selenium {
         if (this.firstLaunch) {
             this.firstLaunch = false;
             console.log("switch parse time")
-            await this.parseTime({time: '', stop: true});
+            await this.parseTime({stop: true});
         } else {
             try {
                 await this.page.waitForSelector('.btn.btn-success');
