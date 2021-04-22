@@ -30,6 +30,10 @@ module.exports = async (req, res) => {
       });
     } catch (error) {
       console.log(error)
+      console.log(tender.isBotOn)
+      console.log(link)
+
+
       await res.json({ status: false, message: "Не получить включить бота" });
     }
   } else {
