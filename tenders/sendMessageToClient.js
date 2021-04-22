@@ -7,6 +7,7 @@ io.on('connection', (socket) => {
 
 module.exports = (data) => {
     for (const client of clients) {
+        console.log("Data= ",data)
         client.emit('message', JSON.stringify(data));
     }
 };
