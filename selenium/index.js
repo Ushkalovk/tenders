@@ -475,7 +475,7 @@ class Selenium {
         if (this.firstLaunch) {
             this.firstLaunch = false;
             console.log("switch parse time")
-            await this.parseTime({stop: true});
+            await this.parseTime({time: '', stop: true});
         } else {
             try {
                 await this.page.waitForSelector('.btn.btn-success');
