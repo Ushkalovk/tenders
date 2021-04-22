@@ -428,7 +428,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('[data-qa=auction] [data-qa=date-start]');
+            await this.page.waitForSelector('.ng-binding.ng-scope');
             const currentTime = await this.page.$eval('[data-qa=auction] [data-qa=date-start]', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
