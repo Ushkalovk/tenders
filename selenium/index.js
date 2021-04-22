@@ -434,7 +434,7 @@ class Selenium {
                 if (currentTime.trim() === '0сек') {
                     this.parseTime({time: currentTime, stop});
                 } else {
-                    console.log("create timer")
+                    console.log(currentTime)
                     this.tender.timers.createTimer({
                         ms: timeToMs(currentTime),
                         link: this.link,
