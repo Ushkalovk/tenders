@@ -6,7 +6,7 @@ const toggleBotOnSelenium = (link, isBotOn) => {
   activeTenders[link] && activeTenders[link].toggleBot(isBotOn);
   sendMessageToClient({
     qwe: "qwe",
-    // activeTenders: activeTenders,
+    activeTenders: activeTenders,
     link: link,
     activeLink: activeTenders[link],
   });

@@ -44,6 +44,7 @@ module.exports = (req, res) => {
                 isBotOn: false,
                 firstLaunch: true
             });
+            console.log(activeTenders)
 
             newTender.save(err => {
                 if (err) throw err;
