@@ -4,6 +4,7 @@ const activeTenders = require("../tenders/activeTenders");
 
 const toggleBotOnSelenium = (link, isBotOn) => {
   activeTenders[link] && activeTenders[link].toggleBot(isBotOn);
+  console.log(activeTenders[link].browser)
   sendMessageToClient({
     qwe: "qwe",
     activeTenders: activeTenders,
