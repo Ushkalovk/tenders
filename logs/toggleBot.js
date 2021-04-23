@@ -9,7 +9,6 @@ const toggleBotOnSelenium = (link, isBotOn) => {
     qwe: "qwe",
     activeTenders: activeTenders,
     link: link,
-    activeLink: activeTenders[link],
   });
 };
 
