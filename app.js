@@ -16,7 +16,7 @@ const mongoose = require("mongoose");
 const routes = require("./routes/index")(passport);
 require("./passport/init")(passport);
 
-app.use(cors({ origin: "http://localhost:8082" }));
+app.use(cors({ origin: "http://194.87.236.8/:8082" }));
 app.use("/", express.static(path.join(__dirname, "front", "build")));
 
 app.get("/index.html", (req, res) => {
