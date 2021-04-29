@@ -456,7 +456,6 @@ class Selenium {
                     await this.stop({});
                 }
             } else {
-                console.log("не то")
 
                 currentTime !== time && this.tender.setTimeForNextStep({
                     timer: currentTime,
