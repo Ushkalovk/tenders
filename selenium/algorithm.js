@@ -34,6 +34,9 @@ class Algorithm {
     }
 
     getDifference(enemyMinBet, round) {
+        console.log(enemyMinBet, ' Min bet')
+        console.log(round, ' Round')
+
         return +((enemyMinBet - this.minBet) / (this.roundsCount - round)).toFixed(1);
     }
 
@@ -59,10 +62,12 @@ class Algorithm {
 
 
         if (round < 3) {
+            console.log(bets, "  Bets");
             if ((bets.length && bets.length + 1 !== participants.length && betBelowOurs.length) || !bets.length) {
                 console.log(filterBets, betBelowOurs, bets, '1');
                 const minBet = this.getMinBet(filterBets);
                 const myBet = minBet - this.getDifference(minBet, round);
+                console.log(this.getDifference(minBet, round), '  Difference')
                 console.log(myBet, 'myBet')
 
                 return {bet: Math.max(Math.min(myBet, this.bet - this.step - 5), this.minBet), allow: true};
