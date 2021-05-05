@@ -75,7 +75,8 @@ module.exports = (passport) => {
     router.route('/company')
         .get((req, res) => company.get(req, res))
         .post((req, res) => company.create(req, res))
-        .put((req, res) => company.updateProxy(req, res));
+        .put((req, res) => company.updateProxy(req, res))
+        .delete((req, res) => company.deleteCompany(req, res));
 
     router.get('/logout', (req, res) => {
         req.logout();

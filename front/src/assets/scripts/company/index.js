@@ -19,11 +19,25 @@ const updateField = (data) => {
     });
 };
 
+const deleteRow = (name) => {
+  var elem = document.querySelector(`tr[data-name=${name}]`);
+  elem.remove();
+}
+
+// function deleteBtnEvent(name){
+//   server.deleteCompany(name).then(response => {
+//     !response.status && createErrorMessage(response.message);
+//     response.status && deleteRow(name);
+//   });
+// }
+
 const createRow = (data) => {
   console.log(data)
   const tr = document.createElement('tr');
   tr.setAttribute('data-name', data.name);
+  console.log(tr.getAttribute('data-name'))
   tr.innerHTML = ` 
+    <td scope="col"><button type="submit" id="deleteBtn" class="btn btn-danger")">Удалить</button></td>
     <td scope="col">${data.name}</td>
     <td scope="col">${data.login}</td>
     <td scope="col">${data.password}</td>
@@ -35,6 +49,23 @@ const createRow = (data) => {
     <td scope="col"><input type="text" data-type='proxyPassword' placeholder="Новый пароль (прокси): "></td>
   `;
 
+  tr.querySelector('#deleteBtn').onclick = function(event) {
+    console.log("Event  ",event);
+      console.log(tr.getAttribute('data-name'));
+      server.deleteCompany(tr.getAttribute('data-name')).then(response => {
+        !response.status && createErrorMessage(response.message);
+        response.status && tr.remove();
+      });
+  };
+    // tr.addEventListener('submit', (event) => {
+    //   event.preventDefault();
+    //   console.log("Event  ",event);
+    //   console.log(event.target.getAttribute('data-name'));
+    //   server.deleteCompany(event.target.getAttribute('data-name')).then(response => {
+    //     !response.status && createErrorMessage(response.message);
+    //     response.status && deleteRow(event.target.getAttribute('data-name'));
+    //   });
+    // })
   table.appendChild(tr);
 };
 
@@ -67,6 +98,16 @@ if (window.location.pathname === '/company.html') {
     inputs.forEach(item => item.value = '');
     button.setAttribute('disabled', 'true');
   });
+
+  // document.querySelector('#companiesTable tbody tr').addEventListener('submit', (event) => {
+  //   event.preventDefault();
+  //   console.log("Event  ",event);
+  //   console.log(event.target.getAttribute('data-name'));
+  //   server.deleteCompany(event.target.getAttribute('data-name')).then(response => {
+  //     !response.status && createErrorMessage(response.message);
+  //     response.status && deleteRow(event.target.getAttribute('data-name'));
+  //   });
+  // })
 
   table.addEventListener('keypress', (e) => {
     if (e.keyCode === 13 && e.target.tagName === 'INPUT') {

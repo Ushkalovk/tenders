@@ -71,6 +71,20 @@ class Server {
       .then(resp => resp.json());
   }
 
+  deleteCompany(name){
+    return fetch(`${this.baseUrl}/company`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: name
+      }),
+    })
+      .then(resp => resp.json());
+  }
+
+
   getTenders() {
     return fetch(`${this.baseUrl}/tender`)
       .then(resp => resp.json());
