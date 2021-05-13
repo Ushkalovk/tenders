@@ -51,6 +51,10 @@ class Algorithm {
         const bets = Array.from(filterParticipants, item => this.parse(item.betText));
         const betBelowOurs = Object.values(this.participants[round - 1]).filter(bet => bet < this.bet && bet > this.minBet);
         const filterBets = [...bets.filter(bet => bet > this.minBet), ...betBelowOurs];
+        console.log(bets, "  Bets 000");
+        console.log(filterBets, "  FilterBets 000");
+
+
 
         if (!betBelowOurs.length && isEveryUnderOurs) {
             console.log(betBelowOurs, isEveryUnderOurs, filterParticipants, '3')

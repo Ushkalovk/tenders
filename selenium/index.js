@@ -182,6 +182,7 @@ class Selenium {
             });
 
             this.parseMinBet(); // уведомляем, что панель открыта
+            console.log("panel opened ");
             this.alert.open = true;
             this.alert.count++;
             this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
@@ -240,7 +241,7 @@ class Selenium {
 
             return Array.from(rows).map(row => {
                 const bet = row.querySelector('.label-price.ng-binding');
-
+                console.log("Making bet...")
                 bet.focus();
                 const color = window.getComputedStyle(bet).getPropertyValue('color');
 
@@ -260,10 +261,10 @@ class Selenium {
         const {bet, allow} = bets;
 
         if (allow) {
-            await this.page.click('#clear-bid-button');
-            await this.page.type('#bid-amount-input', `${bet}`);
-            await this.page.click('#place-bid-button');
-
+            await this.page.click('#clear-bid-button');          /// check buttons
+            await this.page.type('#bid-amount-input', `${bet}`); ///
+            await this.page.click('#place-bid-button');          ///
+            console.log("Ставка сделана")
             username === 'Бот' && this.logs.saveBotSuggest({
                 botSuggest: `${bet} грн.`,
                 link: this.link,
@@ -466,7 +467,7 @@ class Selenium {
                 this.parseTime({time: currentTime, stop});
             }
         } catch (e) {
-            console.log('упс', e.message)
+            console.log('упс parseMinStep', e.message)
         }
     }
 
