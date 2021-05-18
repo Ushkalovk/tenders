@@ -306,7 +306,7 @@ class Selenium {
             if (target.type() === 'page') {
                 const page = await target.page();
                 const url = page.url();
-
+                console.log(url, "URL")
                 if (url !== currentURL && !this.newPage) {
                     await this.page.close();
 
@@ -430,7 +430,6 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForNavigation({waitUntil: "domcontentloaded"});
             await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{timeout: 60000});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
             if (stop) {
