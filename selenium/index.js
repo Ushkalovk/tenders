@@ -469,6 +469,7 @@ class Selenium {
             }
         } catch (e) {
             console.log('упс parseMinStep', e.message)
+            switchToSecondWindow()
         }
     }
 
