@@ -2,11 +2,10 @@ const Tender = require('../models/tender');
 const sendMessageToClient = require("./sendMessageToClient");
 
 
-module.exports = ({update,timer, ms, link}) => {
+module.exports = ({timer, ms, link}) => {
     Tender.findOne({'link': link}, async (err, tender) => {
         if (err){
             console.log(err);
-            update.stop();
         }
             
 
