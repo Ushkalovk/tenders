@@ -483,8 +483,6 @@ class Selenium {
                 console.log('.btn.btn-success нажата');
 
                 this.parseTime({stop: true});
-                this.search();
-                this.findPanelBet();
             } catch (e) {
                 console.log('.btn.btn-success не нажата', e.message);
             }
