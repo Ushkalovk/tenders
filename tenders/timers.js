@@ -28,7 +28,7 @@ module.exports = {
             const msLeft = futureTime - Date.now();
             setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
 
-            !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
+            !Math.max(msLeft - 10000, 0) && updateEverySec.stop();
         }, () => {
             delete activeTenders[link];
             runTender(data);

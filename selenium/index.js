@@ -49,6 +49,7 @@ class Selenium {
         this.tender.sendMessageToClient({message: `${this.proxy}`})
 
         this.page = await this.browser.newPage();
+        console.log(await this.page.browser().version(), "  Version")
         await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
