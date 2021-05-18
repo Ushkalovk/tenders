@@ -430,6 +430,7 @@ class Selenium {
         }
 
         try {
+            await this.page.waitForNavigation({waitUntil: "domcontentloaded"});
             await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{timeout: 60000});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
             if (stop) {
