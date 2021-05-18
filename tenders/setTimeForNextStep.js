@@ -3,18 +3,24 @@ const sendMessageToClient = require("./sendMessageToClient");
 
 
 module.exports = ({timer, ms, link}) => {
-    Tender.findOne({'link': link}, async (err, tender) => {
-        // if (err)
-        //     console.log(err);
-        console.log("Error outside")
-        tender.timeForNextStep = timer;
-        tender.timeForNextStepMs = ms;
+    Tender.findOne({'link': link}, ()=>{
+        try{
+        async (err, tender) => {
+            if (err)
+                console.log(err);
 
-        tender.save(err => {
-            // if (err) throw err;
-            console.log("Error inside")
+            tender.timeForNextStep = timer;
+            tender.timeForNextStepMs = ms;
 
-            sendMessageToClient({timer, ms, link});
-        });
-    })
+            tender.save(err => {
+                if (err) throw err;
+
+                sendMessageToClient({timer, ms, link});
+            });
+            }
+        }  
+        catch(e){
+            console.log(e, "Error")
+        }
+    });
 };
