@@ -26,13 +26,8 @@ module.exports = {
         
         const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
-            try{
                 setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
-            }
-            catch(e){
-                e && updateEverySec.stop();
-                console.log(e, "Timer error")
-            }
+
 
             !Math.max(msLeft - 10000, 0) && updateEverySec.stop();
         }, () => {
