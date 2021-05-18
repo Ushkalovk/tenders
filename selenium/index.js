@@ -473,12 +473,23 @@ class Selenium {
     }
 
     async switchToSecondWindow() {
-        if (!this.firstLaunch) {
-            // this.firstLaunch = false;
-            console.log("switch parse time")
-            await this.parseTime({stop: true});
-        } else {
+        if (this.firstLaunch) {
             this.firstLaunch = false;
+            console.log("switch parse time")
+            try {
+                await this.page.waitForSelector('.btn.btn-success');
+                await this.page.click('.btn.btn-success');
+
+                console.log('.btn.btn-success нажата');
+
+                this.parseTime({stop: true});
+                this.search();
+                this.findPanelBet();
+            } catch (e) {
+                console.log('.btn.btn-success не нажата', e.message);
+            }
+        } else {
+            // this.firstLaunch = false;
             try {
                 await this.page.waitForSelector('.btn.btn-success');
                 await this.page.click('.btn.btn-success');
