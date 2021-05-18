@@ -11,9 +11,8 @@ module.exports = ({timer, ms, link}) => {
 
         tender.save(err => {
             if (err) throw err;
-            else{
-                sendMessageToClient({timer, ms, link});
-            }
+
+            sendMessageToClient({timer, ms, link});
         });
     })
 };
