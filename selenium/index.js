@@ -469,16 +469,16 @@ class Selenium {
             }
         } catch (e) {
             console.log('упс parseMinStep', e.message)
-            switchToSecondWindow()
         }
     }
 
     async switchToSecondWindow() {
-        if (this.firstLaunch) {
-            this.firstLaunch = false;
+        if (!this.firstLaunch) {
+            // this.firstLaunch = false;
             console.log("switch parse time")
             await this.parseTime({stop: true});
         } else {
+            this.firstLaunch = false;
             try {
                 await this.page.waitForSelector('.btn.btn-success');
                 await this.page.click('.btn.btn-success');
