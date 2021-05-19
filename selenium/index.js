@@ -468,7 +468,7 @@ class Selenium {
                 this.parseTime({time: currentTime, stop});
             }
         } catch (e) {
-            console.log('упс parseMinStep', e.message)
+            console.log('упс parseTimeError', e.message)
         }
     }
 
@@ -501,6 +501,7 @@ class Selenium {
                 this.findPanelBet();
             } catch (e) {
                 console.log('.btn.btn-success не нажата', e.message);
+                this.parseTime({stop: false});
             }
         }
     }
