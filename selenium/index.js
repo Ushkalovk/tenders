@@ -49,7 +49,6 @@ class Selenium {
         this.tender.sendMessageToClient({message: `${this.proxy}`})
 
         this.page = await this.browser.newPage();
-        console.log(await this.page.browser().version(), "  Version")
         await this.page.setViewport({'width': 1920, 'height': 1080});
         await this.page.authenticate({username: this.proxyLogin, password: this.proxyPassword});
 
@@ -306,7 +305,7 @@ class Selenium {
             if (target.type() === 'page') {
                 const page = await target.page();
                 const url = page.url();
-                console.log(url, "URL")
+
                 if (url !== currentURL && !this.newPage) {
                     await this.page.close();
 
@@ -468,7 +467,7 @@ class Selenium {
                 this.parseTime({time: currentTime, stop});
             }
         } catch (e) {
-            console.log('упс parseTimeError', e.message)
+            console.log('упс parseMinStep', e.message)
         }
     }
 
@@ -476,20 +475,12 @@ class Selenium {
         if (this.firstLaunch) {
             this.firstLaunch = false;
             console.log("switch parse time")
-            try {
-                await this.page.waitForSelector('.btn.btn-success');
-                await this.page.click('.btn.btn-success');
-
-                console.log('.btn.btn-success нажата');
-
-                this.parseTime({stop: true});
-            } catch (e) {
-                console.log('.btn.btn-success не нажата', e.message);
-                console.log("Parse time 2")
-                this.parseTime({stop: true});
+            try{
+                await this.parseTime({stop: true});
+            } catch(e){
+                this.switchToSecondWindow()
             }
         } else {
-            // this.firstLaunch = false;
             try {
                 await this.page.waitForSelector('.btn.btn-success');
                 await this.page.click('.btn.btn-success');
@@ -501,7 +492,7 @@ class Selenium {
                 this.findPanelBet();
             } catch (e) {
                 console.log('.btn.btn-success не нажата', e.message);
-                this.parseTime({stop: false});
+
             }
         }
     }
