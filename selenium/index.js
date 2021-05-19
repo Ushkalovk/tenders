@@ -485,6 +485,8 @@ class Selenium {
                 this.parseTime({stop: true});
             } catch (e) {
                 console.log('.btn.btn-success не нажата', e.message);
+                console.log("Parse time 2")
+                this.parseTime({stop: true});
             }
         } else {
             // this.firstLaunch = false;
