@@ -25,6 +25,8 @@ class Selenium {
         this.allowParse = true;
         this.newPage = false;
         this.firstLaunch = firstLaunch;
+        this.parseTimeCount = 0;
+        this.tenderName = '';
 
         this.alert = {
             open: false,
@@ -85,7 +87,7 @@ class Selenium {
             await this.page.waitForSelector('.ivu-card-body [data-qa=title]');
             const text = await this.page.$eval('.ivu-card-body [data-qa=title]', element => element.textContent);
             this.tender.sendMessageToClient({message: `Name == ${text}`})
-
+            this.tenderName = text;
             this.tender.setTenderName({tenderName: text, link: this.link});
             this.auth();
         } catch (e) {
@@ -429,7 +431,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{timeout: 10000});
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{waitUntil: 'domcontentloaded'});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
@@ -468,6 +470,12 @@ class Selenium {
             }
         } catch (e) {
             console.log('упс parseMinStep', e.message)
+            this.parseTimeCount++;
+            if(this.parseTimeCount == 3){
+                sendMessageToClient({status: "Ошибка! Удалите и добавьте снова"});
+            } else{
+                this.parseTime({stop: false});
+            }
         }
     }
 
@@ -492,7 +500,6 @@ class Selenium {
                 this.findPanelBet();
             } catch (e) {
                 console.log('.btn.btn-success не нажата', e.message);
-
             }
         }
     }
