@@ -22,7 +22,7 @@ const formatTime = (ms) => {
 
 module.exports = {
     createTimer({ms, link, data}) {
-        const futureTime = Date.now() + ms + 5000;
+        const futureTime = Date.now() + ms;
         console.log("Future time ",futureTime);
         const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
