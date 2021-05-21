@@ -472,6 +472,7 @@ class Selenium {
         } catch (e) {
             console.log('упс parseMinStep', e.message)
             this.parseTimeCount++;
+            this.switchToSecondWindow()
             if(this.parseTimeCount == 3){
                 this.tender.sendMessageToClient({status: "Ошибка! Удалите и добавьте снова"});
             } else{
