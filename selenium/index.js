@@ -286,8 +286,8 @@ class Selenium {
 
     async auth() {
         await this.page.click('#SignIn');
-        await this.page.waitForSelector('ivu-input', {visible: true}); 
-        await this.page.type('ivu-input', this.login);
+        await this.page.waitForSelector('[name=login].ivu-input', {visible: true});
+        await this.page.type('[name=login].ivu-input', this.login);
         await this.page.type('[type=password]', this.password);
         await this.page.keyboard.press('Enter');
 
