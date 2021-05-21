@@ -432,7 +432,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{waitUntil: 'domcontentloaded'});
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{timeout: 60000});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
@@ -473,7 +473,7 @@ class Selenium {
             console.log('упс parseMinStep', e.message)
             this.parseTimeCount++;
             if(this.parseTimeCount == 3){
-                sendMessageToClient({status: "Ошибка! Удалите и добавьте снова"});
+                this.tender.sendMessageToClient({status: "Ошибка! Удалите и добавьте снова"});
             } else{
                 this.parseTime({stop: false});
             }
