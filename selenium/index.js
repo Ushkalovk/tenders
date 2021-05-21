@@ -472,7 +472,6 @@ class Selenium {
         } catch (e) {
             console.log('упс parseMinStep', e.message)
             this.parseTimeCount++;
-            this.switchToSecondWindow()
             if(this.parseTimeCount == 3){
                 this.tender.sendMessageToClient({status: "Ошибка! Удалите и добавьте снова"});
             } else{
@@ -486,9 +485,14 @@ class Selenium {
             this.firstLaunch = false;
             console.log("switch parse time")
             try{
+                await this.page.waitForSelector('.btn.btn-success');
+                await this.page.click('.btn.btn-success');
+
+                console.log('.btn.btn-success нажата');
+
                 await this.parseTime({stop: true});
             } catch(e){
-                this.switchToSecondWindow()
+                await this.parseTime({stop: true});
             }
         } else {
             try {
