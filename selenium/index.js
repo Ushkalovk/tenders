@@ -111,7 +111,7 @@ class Selenium {
 
                 return Array.from(parents).map(parent => {
                     const bet = parent.querySelector('.label-price.ng-binding');
-                    const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
+                    const participant = parent.querySelector('stage-info-item stage-label ng-binding ng-scope').innerText;
                     const betText = bet.innerText;
 
                     bet.focus();
