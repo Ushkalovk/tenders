@@ -115,8 +115,8 @@ class Selenium {
                     console.log(parent.querySelector('.label-price.ng-binding').innerText, " Bet")
 
                     const bet = parent.querySelector('.label-price.ng-binding');
-                    // const participant = parent.querySelector('stage-info-item.stage-label.ng-binding.ng-scope').innerText;
-                    const betText = bet.innerText;
+                    const participant = parent.querySelector('stage-info-item.stage-label.ng-binding.ng-scope').innerText;
+                    // const betText = bet.innerText;
 
                     bet.focus();
                     const color = window.getComputedStyle(bet).getPropertyValue('color');
