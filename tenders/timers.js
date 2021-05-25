@@ -28,10 +28,10 @@ module.exports = {
         const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
             msConst = msConst - 1000;
-                setTimeForNextStep({timer: formatTime(msConst), ms: msLeft, link});
+                setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
 
 
-            !Math.max(msConst - 5000, 0) && updateEverySec.stop();
+            !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
         }, () => {
             delete activeTenders[link];
             runTender(data);
