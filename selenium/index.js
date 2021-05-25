@@ -108,7 +108,7 @@ class Selenium {
 
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
-
+                console.log(parents);
                 return Array.from(parents).map(parent => {
                     console.log(parent, " Parent");
                     console.log(parent.querySelector('stage-info-item.stage-label.ng-binding.ng-scope').innerText, " Participant")
@@ -436,7 +436,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{timeout: 60000});
+            await this.page.waitForSelector('timer.ng-scope.ng-isolate-scope',{waitUntil: 'domcontentloaded'});
             const currentTime = await this.page.$eval('timer.ng-scope.ng-isolate-scope', time => time.innerText);
             if (stop) {
                 if (currentTime.trim() === '0сек') {
