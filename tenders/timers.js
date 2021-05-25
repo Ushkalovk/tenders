@@ -23,14 +23,15 @@ const formatTime = (ms) => {
 module.exports = {
     createTimer({ms, link, data}) {
         const futureTime = Date.now() + ms;
+        const msConst = ms;
         console.log("Future time ",futureTime);
         const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
+            const msLeft2 = msConst - 1000;
+                setTimeForNextStep({timer: formatTime(msLeft2), ms: msLeft, link});
 
-                setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
 
-
-            !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
+            !Math.max(msLeft2 - 5000, 0) && updateEverySec.stop();
         }, () => {
             delete activeTenders[link];
             runTender(data);
