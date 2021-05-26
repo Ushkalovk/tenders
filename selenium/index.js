@@ -105,13 +105,15 @@ class Selenium {
 
         try {
             await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {waitUntil: "domcontentloaded"});
+            await this.page.waitForSelector('span.label-price', {waitUntil: "domcontentloaded"});
+            await this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {waitUntil: "domcontentloaded"});
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
                 
                 return Array.from(parents).map(parent => {
-                    this.page.waitForSelector('span.label-price', {waitUntil: "domcontentloaded"});
+                    
                     const bet = parent.querySelector('span.label-price');
-                    this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {waitUntil: "domcontentloaded"});
+                    
 
                     const participant = parent.querySelector('span.stage-info-item.stage-label.ng-scope').innerText;
                     const betText = bet.innerText;
