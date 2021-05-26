@@ -105,9 +105,7 @@ class Selenium {
 
         try {
             await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {waitUntil: "domcontentloaded"});
-            console.log(await this.page.$eval('span.label-price', element => element.innerText))
-            console.log(await this.page.$eval('span.label-price', element => element.textContent))
-
+            const tmp = await this.page.$eval('span.label-price', element => element.innerText)
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
 
