@@ -108,7 +108,7 @@ class Selenium {
             // const parentsSelectors = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
             const parents = await this.page.evaluate(() => 
                 Array.from(document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope')).map(parent => ({
-                    color: window.getComputedStyle(parent.querySelector('.label-price').focus()).getPropertyValue('color'),
+                    color: "",
                     participant:parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText,
                     betText: parent.querySelector('.label-price').innerText
                 }))
