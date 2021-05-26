@@ -108,12 +108,7 @@ class Selenium {
 
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
-                console.log(parents);
                 return Array.from(parents).map(parent => {
-                    console.log(parent, " Parent");
-                    console.log(parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText, " Participant")
-                    console.log(parent.querySelector('.label-price').innerText, " Bet")
-
                     const bet = parent.querySelector('.label-price');
                     const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
                     const betText = bet.innerText;
