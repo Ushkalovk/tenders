@@ -105,10 +105,9 @@ class Selenium {
 
         try {
             await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope');
-
-            const parents = await this.page.evaluate(() => {
-                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
-                return Array.from(parents).map(parent => {
+            const parentsSelectors = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+            const parents = await this.page.evaluate(() => 
+                Array.from(parentsSelectors).map(parent => {
                     const bet = parent.querySelector('.label-price');
                     const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
                     const betText = bet.innerText;
@@ -121,8 +120,8 @@ class Selenium {
                         participant,
                         betText
                     }
-                });
-            });
+                })
+            );
 
             if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
                 await this.stop({disable: true});
