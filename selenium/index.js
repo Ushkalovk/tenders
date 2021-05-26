@@ -104,7 +104,7 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope');
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {waitUntil: "domcontentloaded"});
 
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
