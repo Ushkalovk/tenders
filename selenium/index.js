@@ -105,22 +105,28 @@ class Selenium {
 
         try {
             await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {waitUntil: "domcontentloaded"});
+            console.log(await this.page.$eval('span.label-price', element => element.innerText))
+            console.log(await this.page.$eval('span.label-price', element => element.textContent))
 
-            const parents = await this.page.evaluate(() => 
-                Array.from(document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope')).map(parent => ({
-                    color: window.getComputedStyle(parent.querySelector('span.label-price')).getPropertyValue('color'),
-                    participant: parent.querySelector('span.stage-info-item.stage-label.ng-scope').innerText,
-                    betText:parent.querySelector('span.label-price').innerText
-                })
-                )
-                    // const bet = parent.querySelector('span.label-price');
-                    // const participant = parent.querySelector('span.stage-info-item.stage-label.ng-scope').innerText;
-                    // const betText = bet.innerText;
-                    // // window.getComputedStyle(parent.querySelector('span.label-price')).getPropertyValue('color')
-                    // bet.focus();
-                    // const color = window.getComputedStyle(bet).getPropertyValue('color');
- 
-            );
+            const parents = await this.page.evaluate(() => {
+                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+
+                return Array.from(parents).map(parent => {
+
+                    const bet = parent.querySelector('span.label-price');
+                    const participant = parent.querySelector('span.stage-info-item.stage-label.ng-scope').innerText;
+                    const betText = bet.innerText;
+
+                    bet.focus();
+                    const color = window.getComputedStyle(bet).getPropertyValue('color');
+
+                    return {
+                        color,
+                        participant,
+                        betText
+                    }
+                });
+            });
 
             if ((this.currentIndex === parents.length && this.currentIndex > 0) || this.isStop) {
                 await this.stop({disable: true});
