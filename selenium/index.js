@@ -111,12 +111,12 @@ class Selenium {
                 console.log(parents);
                 return Array.from(parents).map(parent => {
                     console.log(parent, " Parent");
-                    console.log(parent.querySelector('stage-info-item.stage-label.ng-binding.ng-scope').innerText, " Participant")
-                    console.log(parent.querySelector('.label-price.ng-binding').innerText, " Bet")
+                    console.log(parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText, " Participant")
+                    console.log(parent.querySelector('.label-price').innerText, " Bet")
 
-                    const bet = parent.querySelector('.label-price.ng-binding');
-                    const participant = parent.querySelector('stage-info-item.stage-label.ng-binding.ng-scope').innerText;
-                    // const betText = bet.innerText;
+                    const bet = parent.querySelector('.label-price');
+                    const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
+                    const betText = bet.innerText;
 
                     bet.focus();
                     const color = window.getComputedStyle(bet).getPropertyValue('color');
@@ -268,6 +268,7 @@ class Selenium {
 
         if (allow) {
             await this.page.click('#clear-bid-button');          /// check buttons
+            console.log(bet, " Place bet")
             await this.page.type('#bid-amount-input', `${bet}`); ///
             await this.page.click('#place-bid-button');          ///
             console.log("Ставка сделана")
