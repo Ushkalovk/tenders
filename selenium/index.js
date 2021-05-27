@@ -104,9 +104,9 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {waitUntil: "domcontentloaded"});
-            await this.page.waitForSelector('span.label-price', {waitUntil: "domcontentloaded"});
-            await this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {waitUntil: "domcontentloaded"});
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 60000});
+            await this.page.waitForSelector('span.label-price', {timeout: 60000});
+            await this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {timeout: 60000});
             const parents = await this.page.evaluate(() => {
                 const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
                 
