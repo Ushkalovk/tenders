@@ -104,20 +104,23 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('.stage-info-lining', {timeout: 60000});
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 60000});
             await this.page.waitForSelector('span.label-price', {timeout: 60000});
             await this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {timeout: 60000});
+            await this.page.waitForSelector('.stage-info-lining', {timeout: 60000});
+
             const parents = await this.page.evaluate(() => {
-                const parents = document.querySelectorAll('.stage-info-lining');
-                
+                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
                 return Array.from(parents).map(parent => {
+                    const parent2 = parent.querySelector('.stage-info-lining');
+                    const bet = parent2.querySelector('.label-price');
                     
-                    const bet = parent.querySelector('span.label-price');
-                    const participant = parent.querySelector('span.stage-info-item.stage-label.ng-scope') && parent.querySelector('span.stage-info-item.stage-label.ng-scope').innerText;
-                    const betText = bet && bet.innerText;
+
+                    const participant = parent2.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
+                    const betText = bet.innerText;
 
                     bet.focus();
-                    const color = bet && window.getComputedStyle(bet).getPropertyValue('color');
+                    const color = window.getComputedStyle(bet).getPropertyValue('color');
 
                     return {
                         color,
