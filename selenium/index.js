@@ -104,19 +104,19 @@ class Selenium {
         }
 
         try {
-            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope', {timeout: 60000});
+            await this.page.waitForSelector('.row.auction-stage.stage-item.stage-bids.ng-scope.past-stage', {timeout: 60000});
             await this.page.waitForSelector('span.label-price', {timeout: 60000});
             await this.page.waitForSelector('span.stage-info-item.stage-label.ng-scope', {timeout: 60000});
             await this.page.waitForSelector('.stage-info-lining', {timeout: 60000});
 
             const parents = await this.page.evaluate(() => {
-                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope');
+                const parents = document.querySelectorAll('.row.auction-stage.stage-item.stage-bids.ng-scope.past-stage');
                 return Array.from(parents).map(parent => {
                     const parent2 = parent.querySelector('.stage-info-lining');
-                    const bet = parent2.querySelector('.label-price');
+                    const bet = parent.querySelector('.label-price');
                     
 
-                    const participant = parent2.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
+                    const participant = parent.querySelector('.stage-info-item.stage-label.ng-scope').innerText;
                     const betText = bet.innerText;
 
                     bet.focus();
