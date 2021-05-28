@@ -192,6 +192,7 @@ class Selenium {
             console.log("panel opened ");
             this.alert.open = true;
             this.alert.count++;
+            await this.page.waitForTimeout(6000);  
             this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
 
             // await this.page.waitFor(10000); // дать время на парсинг ставки соперника перед панелью
