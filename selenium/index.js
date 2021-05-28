@@ -194,7 +194,8 @@ class Selenium {
             this.alert.count++;
             this.isBotOn && this.makeABet(); // если бот включен, делаем ставку
 
-            await this.page.waitFor(10000); // дать время на парсинг ставки соперника перед панелью
+            // await this.page.waitFor(10000); // дать время на парсинг ставки соперника перед панелью
+            await this.page.waitForTimeout(10000);  
             this.allowParse = false;
 
             // ждём пока не закроется
@@ -268,12 +269,15 @@ class Selenium {
         const {bet, allow} = bets;
 
         if (allow) {
+            const stringBet = bet.toString();
             await this.page.waitForSelector('#clear-bid-button');
             await this.page.waitForSelector('#bid-amount-input');
             await this.page.waitForSelector('#place-bid-button');
-            await this.page.click('#clear-bid-button');          /// check buttons
+            await this.page.click('#clear-bid-button');
+            await this.page.waitForTimeout(1000);        /// check buttons
             console.log(bet, " Place bet")
-            await this.page.type('#bid-amount-input', `${bet}`); ///
+            await this.page.type('#bid-amount-input', stringBet, {delay: 100}); ///
+            await this.page.waitForTimeout(1000);  
             await this.page.click('#place-bid-button');          ///
             console.log("Ставка сделана")
             username === 'Бот' && this.logs.saveBotSuggest({
