@@ -268,6 +268,9 @@ class Selenium {
         const {bet, allow} = bets;
 
         if (allow) {
+            await this.page.waitForSelector('#clear-bid-button');
+            await this.page.waitForSelector('#bid-amount-input');
+            await this.page.waitForSelector('#place-bid-button');
             await this.page.click('#clear-bid-button');          /// check buttons
             console.log(bet, " Place bet")
             await this.page.type('#bid-amount-input', `${bet}`); ///
