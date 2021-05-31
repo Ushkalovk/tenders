@@ -250,7 +250,7 @@ class Selenium {
             let currentRoundRows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
             let pastRoundRows = pastRound.querySelectorAll('.row.auction-stage.stage-item');
 
-            let rows = pastRoundRows.concat(Array.from(currentRoundRows));
+            let rows = Array.from(pastRoundRows).concat(Array.from(currentRoundRows));
 
             return rows.map(row => {
                 const bet = row.querySelector('.label-price.ng-binding');
