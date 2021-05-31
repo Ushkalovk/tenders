@@ -246,9 +246,10 @@ class Selenium {
     async makeABet() {
         const participants = await this.page.evaluate(() => {
             const currentRound = document.querySelector('.auction-round.ng-scope.current-round');
-            const pastRound = document.querySelectorAll('.auction-round.ng-scope.past-round');
+            const pastRound = document.querySelector('.auction-round.ng-scope.past-round');
             let currentRoundRows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
-            let pastRoundRows = Array.from(pastRound).map(row => row.querySelectorAll('.row.auction-stage.stage-item'))
+            let pastRoundRows = pastRound.querySelectorAll('.row.auction-stage.stage-item');
+
             let rows = pastRoundRows.concat(Array.from(currentRoundRows));
 
             return rows.map(row => {
