@@ -246,9 +246,12 @@ class Selenium {
     async makeABet() {
         const participants = await this.page.evaluate(() => {
             const currentRound = document.querySelector('.auction-round.ng-scope.current-round');
-            const rows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
+            const pastRound = document.querySelectorAll('.auction-round.ng-scope.past-round');
+            let currentRoundRows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
+            let pastRoundRows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
+            let rows = Array.from(pastRoundRows).concat(Array.from(currentRoundRows));
 
-            return Array.from(rows).map(row => {
+            return rows.map(row => {
                 const bet = row.querySelector('.label-price.ng-binding');
                 console.log("Making bet...")
                 bet.focus();
