@@ -45,7 +45,9 @@ class Algorithm {
     }
 
     comparison(participants, round) {
-        const filterParticipants = participants.every(i => i.participant != "Ви");
+        console.log(participants, " participants")
+        const filterParticipants = participants.filter(i => i);
+        console.log(filterParticipants, " Filter Participants")
 
         const isEveryUnderOurs = filterParticipants.every(item => this.parse(item.betText) > this.bet);
         const bets = Array.from(filterParticipants, item => this.parse(item.betText));
