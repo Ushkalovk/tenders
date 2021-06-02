@@ -249,6 +249,7 @@ class Selenium {
             const pastRound = document.querySelectorAll('.auction-round.ng-scope.past-round');
             const pastRoundArray = Array.from(pastRound);
             let pastRoundRows = [];
+            
             pastRoundArray.forEach((item, index) =>{
                 pastRoundRows = pastRoundRows.concat(Array.from(item.querySelectorAll('.row.auction-stage.stage-item')))
             })
