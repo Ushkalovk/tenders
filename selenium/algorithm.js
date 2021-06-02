@@ -48,9 +48,11 @@ class Algorithm {
         console.log(participants, " participants")
         const filterParticipants = participants.filter(i => i);
         console.log(filterParticipants, " Filter Participants")
+        const filterParticipants2 = filterParticipants.filter(i => i.participant != "Ви");
+        console.log(filterParticipants2, " Filter Participants2")
 
-        const isEveryUnderOurs = filterParticipants.every(item => this.parse(item.betText) > this.bet);
-        const bets = Array.from(filterParticipants, item => this.parse(item.betText));
+        const isEveryUnderOurs = filterParticipants2.every(item => this.parse(item.betText) > this.bet);
+        const bets = Array.from(filterParticipants2, item => this.parse(item.betText));
         const betBelowOurs = Object.values(this.participants[round - 1]).filter(bet => bet < this.bet && bet > this.minBet);
         const filterBets = [...bets.filter(bet => bet > this.minBet), ...betBelowOurs];
         console.log(bets, "  Bets 000");
@@ -59,12 +61,12 @@ class Algorithm {
 
 
         if (!betBelowOurs.length && isEveryUnderOurs) {
-            console.log(betBelowOurs, isEveryUnderOurs, filterParticipants, '3')
+            console.log(betBelowOurs, isEveryUnderOurs, filterParticipants2, '3')
 
             return {bet: this.bet, allow: false};
         }
 
-        console.log(filterParticipants, isEveryUnderOurs, this.bet, ': filterParticipants, isEveryUnderOurs', 'myBet')
+        console.log(filterParticipants2, isEveryUnderOurs, this.bet, ': filterParticipants, isEveryUnderOurs', 'myBet')
 
 
         if (round < 3) {
