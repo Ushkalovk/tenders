@@ -250,7 +250,7 @@ class Selenium {
             const pastRoundArray = Array.from(pastRound);
             let pastRoundRows;
             pastRoundArray.forEach((item, index) =>{
-                pastRoundRows.push(Array.from(item.querySelectorAll('.row.auction-stage.stage-item')))
+                pastRoundRows = pastRoundRows.concat(Array.from(item.querySelectorAll('.row.auction-stage.stage-item')))
             })
             
             let currentRoundRows = currentRound.querySelectorAll('.row.auction-stage.stage-item');
