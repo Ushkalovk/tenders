@@ -42,7 +42,7 @@ module.exports = {
             if (err && res) res.json({status: false, message: 'Ошибка удаления'});
 
             sendMessageToClient({deleteTender: true, link, message});
-            timers.updateEverySec.stop();
+            timers.isRemove = true;
             res && res.json({status: true, message: 'Удаление успешно завершено'})
         })
     }

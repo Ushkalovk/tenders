@@ -21,15 +21,19 @@ const formatTime = (ms) => {
 };
 
 module.exports = {
+    isRemove = false
+}
+
+module.exports = {
     createTimer({ms, link, data}) {
         const futureTime = Date.now() + ms;
         let msConst = ms;
         console.log("Future time ",futureTime);
-        export const updateEverySec = new CronJob('* * * * * *', () => {
+        const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
             msConst = msConst - 1000;
                 setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
-
+            isRemove && updateEverySec.stop();
             !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
         }, () => {
             if(activeTenders[link]){
