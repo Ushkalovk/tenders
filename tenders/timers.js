@@ -20,9 +20,8 @@ const formatTime = (ms) => {
         `${date.getMinutes()}мин. ${date.getSeconds()}сек. до начала`;
 };
 
-module.exports = {
-    isRemove = false
-}
+let isRemove = false
+
 
 module.exports = {
     createTimer({ms, link, data}) {
