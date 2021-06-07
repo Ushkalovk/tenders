@@ -32,11 +32,13 @@ module.exports = {
 
             !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
         }, () => {
-            delete activeTenders[link];
-            runTender(data);
-            console.log('Запуск тендера...');
-
-            setTimeout(() => setTimeForNextStep({timer: 'Запуск тендера...', link}), 1000);
+            if(activeTenders[link]){
+                delete activeTenders[link];
+                runTender(data);
+                console.log('Запуск тендера...');
+    
+                setTimeout(() => setTimeForNextStep({timer: 'Запуск тендера...', link}), 1000);
+            }
         });
 
         updateEverySec.start();
