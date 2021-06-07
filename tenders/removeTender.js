@@ -1,6 +1,8 @@
 const Tender = require('../models/tender');
 const sendMessageToClient = require("./sendMessageToClient");
 const activeTenders = require('./activeTenders');
+const timers = require('./timers');
+
 
 module.exports = {
     find(req, res) {
@@ -40,6 +42,7 @@ module.exports = {
             if (err && res) res.json({status: false, message: 'Ошибка удаления'});
 
             sendMessageToClient({deleteTender: true, link, message});
+            timers.updateEverySec.stop();
             res && res.json({status: true, message: 'Удаление успешно завершено'})
         })
     }

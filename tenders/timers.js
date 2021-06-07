@@ -25,11 +25,10 @@ module.exports = {
         const futureTime = Date.now() + ms;
         let msConst = ms;
         console.log("Future time ",futureTime);
-        const updateEverySec = new CronJob('* * * * * *', () => {
+        export const updateEverySec = new CronJob('* * * * * *', () => {
             const msLeft = futureTime - Date.now();
             msConst = msConst - 1000;
                 setTimeForNextStep({timer: formatTime(msLeft), ms: msLeft, link});
-
 
             !Math.max(msLeft - 5000, 0) && updateEverySec.stop();
         }, () => {
